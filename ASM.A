@@ -4047,10 +4047,6 @@ ___pass:
 	mov cx,1
 ___passerr:
 	ret
-getch:
-	mov ah,0
-	int 16h
-	ret
 pass1:
 	db "     : lines processed in pass 1.",0
 pass2:
