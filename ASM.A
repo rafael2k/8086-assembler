@@ -60,7 +60,7 @@ strlen:
 	mov cx,-1
 	cmp cx,cx
 	cld
-	repnz   
+	repnz
 	scasb
 	neg cx
 	dec cx
@@ -78,7 +78,7 @@ strpos:
 	pop ax
 	mov cx,-1
 	cld
-	repnz   
+	repnz
 	scasb
 	neg cx
 	dec cx
@@ -96,7 +96,7 @@ strnpos:
 	pop ax
 	mov cx,-1
 	cld
-	repz   
+	repz
 	scasb
 	neg cx
 	dec cx
@@ -111,9 +111,9 @@ strrev:
 	push ax
 	mov si,di
 	call strlen
-	dec ax   
+	dec ax
 	add si,ax
-___strrev:   
+___strrev:
 	mov al,[di]
 	mov ah,[si]
 	mov [si],al
@@ -132,7 +132,7 @@ strlwr:
 	xor bx,bx
 	xor ah,ah
 	dec bx
-___nextlwr:   
+___nextlwr:
 	inc bx
 	mov al,[bx+di]
 	cmp al,0
@@ -343,7 +343,7 @@ ston: ;(di,bx=base)->ax
 	xor cx,cx;
 	call strlen
 	xchg ax,bx
-___decloop:   
+___decloop:
 	dec bx
 	mov al,[di+bx];
 	cmp al,'a'
@@ -373,10 +373,10 @@ ___normdigit:
 	pop dx
 	pop cx
 	ret
-digitlist:   
+digitlist:
 db "00112233445566778899aAbBcCdDeEfFgGhHiIjJkK"
 db "lLmMnNoOpPqQrRsStToOpPqQrRsStTuUvVwWxXyYzZ",0
-destructivedl:   
+destructivedl:
 db "00112233445566778899aAbBcCdDeEfFgGhHiIjJkK"
 db "lLmMnNoOpPqQrRsStToOpPqQrRsStTuUvVwWxXyYzZ",0
 testdigits: ;(di,bx=base)->cx=err
@@ -430,7 +430,7 @@ aton: ;(di)->ax,cx=err
 	cmp byte ptr [di],'-'
 	jne ___nosign
 	mov bx,-1
-___signposi:   
+___signposi:
 	inc di
 ___nosign:
 	push bx
@@ -488,7 +488,7 @@ ___notrailchar:
 	jcxz ___aton
 	call ston
 	mov cx,1
-___aton:   
+___aton:
 	pop bx
 	mov [di+bx],si
 	pop bx
@@ -565,7 +565,7 @@ qtostest: ;(di=string)->(cx=err(open),ax=qtdlen)
 ___qtoscont:
 	inc di
 ___nextqtchar:
-	mov al,[di] 
+	mov al,[di]
 	cmp al,92
 	jne ___testqtquote
 	inc di
@@ -601,7 +601,7 @@ qtos: ;(di=string)->(cx=err(open)) ;conv qtd str to str
 	call strcpy
 	dec si
 ___nextchar:
-	mov al,[di] 
+	mov al,[di]
 	cmp al,92
 	jne ___testquote
 	inc si
@@ -610,18 +610,18 @@ ___nextchar:
 	jne ___notnewline
 	mov byte ptr [si],10
 	jmp ___delslash
-___notnewline: 
+___notnewline:
 	cmp al,'t'
 	jne ___nottabchar
 	mov byte ptr [si],9
 	jmp ___delslash
-___nottabchar:   
+___nottabchar:
 	cmp al,'r'
 	jne ___notreturn
 	mov byte ptr [si],13
 	jmp ___delslash
-___notreturn:  
-___delslash:   
+___notreturn:
+___delslash:
 	call strcpy
 	dec si
 	jmp ___testend
@@ -684,7 +684,7 @@ ___nodelim:
 	dec bx
 ___nextch:
 	inc bx
-	mov al,[bx+di]   
+	mov al,[bx+di]
 	cmp al,0
 	jz ___strtok
 	xchg si,di
@@ -705,7 +705,7 @@ ___nextch:
 ___swapdelim:
 	mov al,byte ptr [bx+di]
 	mov byte ptr [bx+di],0
-___strtok:   
+___strtok:
 	mov si,di
 	add si,bx
 	pop dx
@@ -715,7 +715,7 @@ unstrtok:
 	push bx
 	push ax
 	call strlen
-	pop bx   
+	pop bx
 	xchg bx,ax
 	mov [di+bx],al
 	pop bx
@@ -741,7 +741,7 @@ comparemid:
 	call strcmp
 	pop si
 	ret
-chop:   
+chop:
 	call halfdiff
 	cmp ax,cx
 	jl endchop
@@ -755,7 +755,7 @@ chop:
 	sub bx,ax
 	jmp chop
 higher:
-	call halfdiff   
+	call halfdiff
 	add si,ax
 	jmp chop
 endchop:
@@ -793,7 +793,7 @@ ___pass2get:
 ___symfound:
 	mov cx,1
 	mov ax,[si+30]
-___getSymbol:   
+___getSymbol:
 	pop bx
 	pop dx
 	pop si
@@ -802,7 +802,7 @@ fetchsymbol:
 	push si
 	mov cx,2
 	mov si,[nextsymbol]
-___nextsym:   
+___nextsym:
 	mov ax,07fffh
 	cmp si,symstack
 	je ___fetchsymbol
@@ -829,7 +829,7 @@ addSymbol: ;(di=symbol name,ax=value) (cx=error if clr)
 	xor cx,cx
 	mov di,er_invsymnam
 	jmp ___addSymbol
-___symLenOk:   
+___symLenOk:
 	mov si,[nextsymbol]
 	cmp si,___endofcode
 	jnb ___symNumOk
@@ -846,14 +846,14 @@ ___SymNumOk:
 	cmp cx,cx
 	repz
 	stosb
-	pop di   
+	pop di
 	pop si
 	call strcpy
 	mov [di+30],dx
 	sub word ptr [nextsymbol],32
 	xchg si,di
 	mov cx,1
-___addSymbol:   
+___addSymbol:
 	pop si
 	pop dx
 	pop ax
@@ -877,7 +877,7 @@ swapsym:
 	call copysym ;s->t
 	pop di
 	xchg si,di
-	call copysym ;d->s         
+	call copysym ;d->s
 	xchg si,di
 	push si
 	mov si,tempbuffer
@@ -894,14 +894,14 @@ sortSym:
 	mov dx,symstack
 	cmp bx,dx
 	je ___sortsym
-___rebubble:   
+___rebubble:
 	add bx,32
 	cmp bx,dx
 	je ___sortsym
 	mov di,dx
 	mov si,dx
 	sub si,32
-___bubbleup:   
+___bubbleup:
 	call strcmp
 	cmp ax,0
 	jl ___noswapsym
@@ -930,7 +930,7 @@ db 10,6,9,5,8,4,0,2,1
 db 0,1,2,3,4,5,6,7,6
 ___iregcomb:
 addrspec:dw 0
-containslabel:dw 0 
+containslabel:dw 0
 decodeIndirect: ;(di)->al=byte,cx=error,dx=num if req
 ;cx:indicates error if zero
 ;dx:addr specd in ind expr,if al.64
@@ -966,7 +966,7 @@ ___nextparm:
 	test dl,al
 	jz ___noteireg
 ___illidirexit:
-	mov di,er_illidir 
+	mov di,er_illidir
 	xor cx,cx
 	pop ax
 	pop si
@@ -1016,15 +1016,15 @@ ___logaddress:
 	add word ptr[addrspec],ax
 	jmp ___nextreg
 ;___illidirexalt:
-	jmp ___illidirexit   
+	jmp ___illidirexit
 ___undeflabel:
 	pop ax
-	mov di,er_undefsym 
+	mov di,er_undefsym
 	xor cx,cx
 	pop ax
 	pop si
 	jmp ___decodeIndirect
-___nextreg: 
+___nextreg:
 	pop ax
 	pop si
 	mov di,si
@@ -1045,7 +1045,7 @@ ___notbpalone:
 	push bx
 	push di
 	mov di,iregcomb
-	mov bx,0   
+	mov bx,0
 	and dl,15
 ___nextconv:
 	cmp byte ptr[di+bx],dl
@@ -1058,12 +1058,12 @@ ___nextconv:
 	mov cx,0
 	mov di,er_illidir
 	jmp ___decodeIndirect
-___convert:   
+___convert:
 	add bx,9             ;move to conv line
 	mov dl,byte ptr[di+bx]
 	pop di
 	pop bx
-; add address size indicator (ie bits 128+64)   
+; add address size indicator (ie bits 128+64)
 	test dh,64
 	jz ___idcomplete
 	and dh,15
@@ -1073,7 +1073,7 @@ ___convert:
 	jmp ___idcomplete
 ___notjustaddr:
 	mov ax,word ptr[addrspec]
-	
+
 	cmp ax,-128             ;is address a word
 	jl ___wordaddr
 	cmp ax,127             ;is address a word
@@ -1082,7 +1082,7 @@ ___notjustaddr:
 	jne ___wordAddr
 	add dl,040h
 	jmp ___idcomplete
-___wordaddr:   
+___wordaddr:
 	add dl,080h
 ___idcomplete:
 	xchg ax,dx
@@ -1189,7 +1189,7 @@ testfar: ;(di)->(ax=128 if far)("far" skipped)
 	mov si,farstring
 	call strcmp
 	pop si
-	cmp al,0         
+	cmp al,0
 	je ___farpresent
 	pop ax
 	call unstrtok
@@ -1311,12 +1311,12 @@ ___posssegaddr1:
 	pop ax
 	mov di,si
 	call strtok
-	cmp byte ptr[di],':' 
+	cmp byte ptr[di],':'
 	je ___posssegaddr2
 	xor bx,bx
 	jmp ___notsegaddr
 ___posssegaddr2:
-	mov di,si   
+	mov di,si
 	call strtok
 	push ax
 	call aton
@@ -1416,7 +1416,7 @@ splitExpression: ;separate parameters
 	mov al,','
 	call outOfQuote
 	xchg si,di
-	cmp ax,bx   
+	cmp ax,bx
 	jge ___exp1only
 	add si,ax
 	inc si
@@ -1592,12 +1592,12 @@ mnemonics:
 	db "or",0,0,0,0,0,   01h
 	db "out",0,0,0,0,    77h
 	db "pop",0,0,0,0,    3fh
-	db "popf",0,0,0,     68h   
+	db "popf",0,0,0,     68h
 	db "push",0,0,0,     3eh
 	db "pushf",0,0,      67h
 	db "rcl",0,0,0,0,    12h
 	db "rcr",0,0,0,0,    13h
-	db "repnz",0,0,      82h   
+	db "repnz",0,0,      82h
 	db "repz",0,0,0,     83h
 	db "ret",0,0,0,0,    6bh
 	db "retf",0,0,0,     6eh
@@ -1685,7 +1685,7 @@ ___nextexp:
 	je ___rthisis8bit
 	cmp ah,48
 	jne ___expdone
-	mov ch,16   
+	mov ch,16
 	jmp ___expdone
 ___rthisisseg:
 	mov ch,16
@@ -1700,12 +1700,12 @@ ___expdone:
 	je ___sizeok
 	cmp ch,16
 	jne ___errexit
-___sizeok:   
+___sizeok:
 	cmp cl,1
 	je ___indok
 	cmp cl,2
 	je ___indok
-___errexit:   
+___errexit:
 	xor cx,cx
 	mov di,er_invparams
 	jmp ___indirectOrder
@@ -1727,7 +1727,7 @@ checkExpression: ;(di=indirect expression) (cx=error)
 	push si
 	push di
 	mov ax,0
-___nextechk:   
+___nextechk:
 	call strtok
 	push ax
 	push si
@@ -1758,7 +1758,7 @@ ___defecerr:
 	jmp ___checkExpression
 ___nextstrtok:
 	pop si
-___nextstrtok2:   
+___nextstrtok2:
 	pop ax
 	mov di,si
 	cmp ax,0
@@ -1766,7 +1766,7 @@ ___nextstrtok2:
 ___endechk:
 	pop di
 	mov cx,1
-___checkExpression:   
+___checkExpression:
 	pop si
 	pop dx
 	pop bx
@@ -1817,7 +1817,7 @@ ___testreg16:
 ___testregseg:
 	cmp ah,4             ;regseg
 	jne ___testlit8
-	mov ah,160           
+	mov ah,160
 	xor bx,bx
 	mov cx,1
 	jmp ___getregtype
@@ -1851,7 +1851,7 @@ ___getregtype:
 	pop dx
 	ret
 encodeTwoParam: ;()->al=opcode[-mne],dx=value,bx=literal
-;  ah={0..15=ptr size}, 
+;  ah={0..15=ptr size},
 ;  ah={16=order,32=size,64=literal,128=regisseg}
 	mov ax,0
 	call indirectOrder
@@ -1859,7 +1859,7 @@ encodeTwoParam: ;()->al=opcode[-mne],dx=value,bx=literal
 	jne ___swapexp
 	mov ax,0
 	jmp ___noswap
-___swapexp: 
+___swapexp:
 ;   xor ah,ah
 	cmp al,1
 	jne ___noswap
@@ -1876,7 +1876,7 @@ ___noswap:
 	jle ___badlit2p
 	cmp ah,7
 	je ___badlit2p
-	cmp ah,5   
+	cmp ah,5
 	je ___segadrnotalw
 	cmp ah,6
 	je ___isexp
@@ -1910,7 +1910,7 @@ ___isegr:
 	and ah,15
 	or ah,176
 	jmp ___codepar2
-___badlit2p:   
+___badlit2p:
 	pop ax
 	pop cx
 	xor cx,cx
@@ -1923,7 +1923,7 @@ ___isexp:
 	jne ___expokay
 	pop cx
 	jmp ___encodeTwoParam
-___expokay:   
+___expokay:
 	pop cx
 	mov ch,cl
 	mov cl,4
@@ -1958,7 +1958,7 @@ ___notbadpar2:
 	test ah,128
 	jz ___notpar2seg
 	jmp ___par2seg
-___notpar2seg:   
+___notpar2seg:
 	test ah,64
 	jz ___notpar2lit
 	jmp ___par2lit
@@ -2092,7 +2092,7 @@ ___par2littoolrg:
 	or ah,64
 	mov cx,1
 	jmp ___encodeTwoParam
-___litistoolrg:   
+___litistoolrg:
 	xor cx,cx
 	xor ax,ax
 	mov di,er_littoolarge
@@ -2103,14 +2103,14 @@ ___badpar2:
 	xor ax,ax
 	mov di,er_invparams
 	jmp encodeTwoParam
-___encodeTwoParam:   
+___encodeTwoParam:
 	ret
 countParams: ;()->(ax=num of par:0,1 or 2)
 	xor ax,ax
 	cmp byte ptr [exp2store],0
 	je ___testp1
 	inc ax
-___testp1:   
+___testp1:
 	cmp byte ptr [exp1store],0
 	je ___countparams
 	inc ax
@@ -2145,7 +2145,7 @@ ___writeWord:
 	jmp ___writeLit
 ___writeLit:
 	cmp cl,1
-	je ___writeLitByte   
+	je ___writeLitByte
 	cmp cl,2
 	je ___writeLitWord
 	mov cx,1
@@ -2227,7 +2227,7 @@ ___aluaxlitwrite:
 	jmp ___codeAlu0
 ___notalu0acc:
 	and ch,7    ;only the mne bits
-	mov cl,3    
+	mov cl,3
 	shl ch,cl   ;based at bit 2 to 5
 	or al,ch    ;combined with parameter code
 	mov ch,ah
@@ -2374,7 +2374,7 @@ ___alu1par2lit:
 	call writeexpdata
 	mov cx,1
 	jmp ___codealu1
-___codealu1:   
+___codealu1:
 	ret
 codeLeadses: ;()->(ax=codelength,[codestore] filled)
 	push bx
@@ -2402,15 +2402,15 @@ ___testleadsesseg:
 	test ah,15
 	jnz ___testptrword
 	jmp ___leadsesformok
-___testptrword:   
+___testptrword:
 	test ah,2
 	jnz ___leadsesformok
-___leadsesformerr: 
+___leadsesformerr:
 	xor cx,cx
 	mov ax,0
 	mov di,er_inviform
 	jmp ___codeLeadses
-___leadsessegerr: 
+___leadsessegerr:
 	mov di,er_inviform
 	xor cx,cx
 	mov ax,0
@@ -2609,7 +2609,7 @@ ___movNoErr:
 ;this instruction is non seg non literal
 	mov ch,ah
 	and ch,32
-	mov cl,5            
+	mov cl,5
 	shr ch,cl            ;size = 1
 	and ah,16
 	mov cl,3
@@ -2691,7 +2691,7 @@ codePort:
 	cmp cx,0
 	jne ___noreg2err
 	jmp ___codePort
-___noreg2err:   
+___noreg2err:
 	test ah,128
 	jz ___notPortSeg
 	xor cx,cx
@@ -2701,7 +2701,7 @@ ___notPortSeg:
 	test ah,64
 	jz ___portreg
 	jmp ___portlit
-___portreg:   
+___portreg:
 	cmp ax,8194                ;is it dx?
 	je ___testinreg
 	cmp al,0                   ;is it al/ax?
@@ -2772,7 +2772,7 @@ ___plitisbyte:
 	jne ___badportreg
 	test ah,128
 	jnz ___badportreg
-	test ah,64 
+	test ah,64
 	jnz ___badplitpos
 	and ah,32
 	mov cl,5
@@ -2798,12 +2798,12 @@ ___badportreg:
 	xor cx,cx
 	xor ax,ax
 	jmp ___codePort
-___codePort:   
+___codePort:
 	ret
 codeTwoParam: ;([codeStore])->(ax=length)(cx=error)
 	call encodeMnemonic
 	mov cx,ax
-	mov ax,cx   
+	mov ax,cx
 	and al,0f8h
 	cmp al,0
 	jne ___notAlu0
@@ -2824,7 +2824,7 @@ ___notAlu1:
 	je ___isLeaDSes
 	cmp al,6dh
 	jne ___notLeaDSes
-___isLEaDsEs:  
+___isLEaDsEs:
 	call codeLeadses
 	jmp ___codeTwoParam
 ___notLeaDsEs:
@@ -2919,7 +2919,7 @@ ___testpope:
 	call writeExpData
 	mov cx,1
 	jmp ___codePushPop
-___popseg:   
+___popseg:
 	pop ax
 	mov ah,08fh
 	mov cl,0
@@ -2942,7 +2942,7 @@ codeIncDec:
 	cmp ah,3
 	je ___idreg16
 	cmp ah,2
-	je ___idreg8                     
+	je ___idreg8
 	pop ax
 	mov di,er_invparams
 	mov ax,0
@@ -2958,7 +2958,7 @@ ___idreg8:
 	and al,1
 	mov cl,3
 	shl al,cl
-	pop cx      
+	pop cx
 	and ch,199
 	or cl,0c0h
 	or cl,al
@@ -2998,7 +2998,7 @@ ___testide:
 	call writeExpData
 	mov cx,1
 	jmp ___codeIncDec
-___decseg:   
+___decseg:
 	pop ax
 	mov ah,0ffh
 	and al,199
@@ -3018,7 +3018,7 @@ codeAlu2:
 	shl al,cl
 	pop cx
 	or cl,al
-	xchg ax,cx   
+	xchg ax,cx
 	push ax
 	mov cl,4
 	shr ah,cl
@@ -3028,7 +3028,7 @@ codeAlu2:
 	je ___alu2reg8
 	cmp ah,3
 	je ___alu2reg16
-___badalu2:   
+___badalu2:
 	xor cx,cx
 	xor ax,ax
 	mov di,er_inviform
@@ -3143,7 +3143,7 @@ codeRet1:
 	pop ax
 	mov ah,0c2h
 	jmp ___writeret1code
-___mustberetf:   
+___mustberetf:
 	pop ax
 	mov ah,0cah
 ___writeret1code:
@@ -3254,13 +3254,13 @@ ___testLabJump:
 	inc dx
 	mov [codestore+1],dl
 	jmp ___skipwordjump
-___wordjump:   
+___wordjump:
 	mov ax,3
 	mov [codestore+1],dx
-___skipwordjump:   
+___skipwordjump:
 	mov cx,1
 	jmp ___codeJumpCall
-___badJumpCall:   
+___badJumpCall:
 	xor cx,cx
 	xor ax,ax
 	mov di,er_inviform
@@ -3296,16 +3296,16 @@ codeBranch:
 	mov ax,0
 	mov di,er_inviform
 	jmp ___codeBranch
-___brokay:   
+___brokay:
 	cmp [symbolload],0
 	je ___nocalc
 	call calc8off
 	cmp cx,0
 	je ___codeBranch
-___nocalc:   
+___nocalc:
 	call encodeMnemonic
 	add al,30h
-	mov ah,dl   
+	mov ah,dl
 	mov [codestore],ax
 	mov ax,2
 	mov cx,1
@@ -3325,15 +3325,15 @@ codeLoop:
 	mov ax,0
 	mov di,er_inviform
 	jmp ___codeLoop
-___loopokay:   
+___loopokay:
 	cmp [symbolload],0
 	je ___noloopcalc
 	call calc8off
 	cmp cx,0
 	je ___codeBranch
-___noloopcalc:   
+___noloopcalc:
 	call encodeMnemonic
-	mov ah,dl   
+	mov ah,dl
 	mov [codestore],ax
 	mov ax,2
 	mov cx,1
@@ -3382,7 +3382,7 @@ ___notInt:
 ___notAscAdj:
 	mov ax,cx
 	cmp al,06bh          ;ret
-	je ___isRet1          
+	je ___isRet1
 	cmp al,06eh          ;retf
 	jne ___notRet1
 ___isret1:
@@ -3416,9 +3416,9 @@ ___notLoopy:
 	mov di,er_inviform
 	xor cx,cx
 	xor ax,ax
-___codeOneParam:  
+___codeOneParam:
 	ret
-mneTranslate:                    
+mneTranslate:
 	db 01ah,037h,01dh,0d5h,01ch,0d4h,01bh,03fh,064h,098h,088h,0f8h,08ch,0fch
 	db 08ah,0fah,085h,0f5h,056h,0a6h,057h,0a7h,009h,02eh,065h,099h,018h,027h
 	db 019h,02eh,00bh,03eh,008h,026h,084h,0f4h,070h,0ceh,071h,0cfh,06ah,09fh
@@ -3426,7 +3426,7 @@ mneTranslate:
 	db 067h,09ch,082h,0f2h,083h,0f3h,06bh,0c3h,06eh,0cbh,069h,09eh,05eh,0aeh
 	db 05fh,0afh,00ah,036h,089h,0f9h,08dh,0fdh,08bh,0fbh,05ah,0aah,05bh,0abh
 	db 066h,09bh,072h,0d7h
-codeZeroParam:          
+codeZeroParam:
 	call encodeMnemonic
 	cmp cx,0
 	je ___codeZeroParam
@@ -3439,7 +3439,7 @@ ___nextoptest:
 	inc di
 	mov ax,[di]
 	cmp al,cl
-	jne ___nextoptest   
+	jne ___nextoptest
 	mov [codestore],ah
 	and ah,0feh
 	cmp ah,0d4h
@@ -3459,16 +3459,16 @@ mstob: ;(di=str,ax=wordlen)->(ax=len,cx=err);mix str to byt
 	push dx
 	mov dx,ax
 	mov si,0
-___nextq:   
+___nextq:
 	call qtostest
 	cmp cx,0
 	jne ___quotedstring
 	jmp ___numtest
-___quotedstring:   
+___quotedstring:
 	mov bx,ax
 	push ax
 	mov al,[di+bx]
-	mov byte ptr[di+bx],0   
+	mov byte ptr[di+bx],0
 	push ax
 	push si
 	mov si,tempbuffer
@@ -3501,7 +3501,7 @@ ___quotedstring:
 	pop ax
 	jmp ___testendq
 ___nowordconv:
-	push ax   
+	push ax
 	push di
 	mov di,tempbuffer
 	add si,codestore
@@ -3521,7 +3521,7 @@ ___badquotedstr:
 	xor ax,ax
 	xor cx,cx
 	mov di,er_strtoolong
-___numtest: 
+___numtest:
 	mov ax,0
 	push si
 	call strtok
@@ -3530,7 +3530,7 @@ ___numtest:
 	call aton
 	cmp cx,0
 	je ___numbad
-	mov bx,ax   
+	mov bx,ax
 	pop ax
 	pop si
 	call unstrtok
@@ -3576,7 +3576,7 @@ ___stoberr:
 	mov ax,0
 	xor cx,cx
 	jmp ___mstob
-___mstob:   
+___mstob:
 	pop dx
 	pop bx
 	pop si
@@ -3657,7 +3657,7 @@ ___numchecks:
 	je ___encodePseudo
 	mov cx,1
 	mov ax,0
-	jmp ___encodePseudo   
+	jmp ___encodePseudo
 ___defbyte:
 	mov di,exp1store
 	call qtostest
@@ -3667,10 +3667,10 @@ ___defbyte:
 	call aton
 	cmp cx,0
 	je ___dblabel
-___dbstr:   
+___dbstr:
 	mov ax,0
 	mov di,expsetstore
-	call mstob   
+	call mstob
 	jmp ___encodePseudo
 ___defword:
 	mov di,exp1store
@@ -3684,7 +3684,7 @@ ___defword:
 ___dwstr:
 	mov ax,1
 	mov di,expsetstore
-	call mstob   
+	call mstob
 	jmp ___encodePseudo
 ___dblabel:
 	mov cx,0
@@ -3749,7 +3749,7 @@ ___linelenok:
 	cmp cx,0
 	jne ___emptyLabel
 	jmp ___encodeMnemonic
-___emptylabel: 
+___emptylabel:
 	mov ax,0
 	mov di,mnemonicstore
 	call removetrails
@@ -3763,7 +3763,7 @@ ___emptylabel:
 	call encodeMnemonic
 	cmp cx,0
 	jne ___mneok
-___badmne:  
+___badmne:
 	call encodePseudo
 	jmp ___encodeLine
 ___mneok:
@@ -3805,7 +3805,7 @@ ___encodeline:
 	cmp cx,0
 	je ___errcode
 	mov di,codestore
-___errcode:   
+___errcode:
 	pop bx
 	pop dx
 	pop si
@@ -3889,9 +3889,9 @@ ___norer:
 	mov cx,1
 	jnb ___nower
 	mov di,er_ouferr
-___tiser:   
+___tiser:
 	mov cx,0
-___nower:   
+___nower:
 	ret
 rewind:
 	mov ax,04200h
@@ -3944,13 +3944,13 @@ readln:
 	cmp bx,[bufend]
 	jg ___outofbuf
 	jmp ___eolinbuf
-___outofbuf:   
-	cmp [eof],1   
+___outofbuf:
+	cmp [eof],1
 	jne ___noteof
 	mov cx,1
 	mov [eof],2
 	jmp ___readln
-___noteof:   
+___noteof:
 	mov cx,[bufend]
 	sub cx,[nextpos]
 	mov si,getsbuffer
@@ -3979,9 +3979,9 @@ ___noreaderr:
 	mov [eof],1
 	add ax,dx
 	mov [bufend],ax
-___readok:   
+___readok:
 	mov di,getsbuffer
-	mov [nextpos],di               
+	mov [nextpos],di
 	mov al,10
 	call strpos
 	cmp ax,[bufend]
@@ -3989,14 +3989,14 @@ ___readok:
 	mov cx,0
 	mov di,er_linetoolong
 	jmp ___readln
-___eolinbuf:   
+___eolinbuf:
 	mov bx,ax
 	mov word ptr [di+bx-1],0
 	mov [nextpos],di
 	add [nextpos],bx
 	add word ptr [nextpos],1
 	jmp ___readln
-___readln:   
+___readln:
 	pop si
 	pop dx
 	pop bx
@@ -4011,8 +4011,8 @@ pass:
 	call clrbuf
 	mov cx,[codebase]
 	mov word ptr[curip],cx
-___repeat:   
-	inc word ptr[line]   
+___repeat:
+	inc word ptr[line]
 	mov ax,[line]
 	call printnum
 	call println
