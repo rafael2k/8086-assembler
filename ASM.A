@@ -4012,7 +4012,6 @@ pass:
 	mov cx,[codebase]
 	mov word ptr[curip],cx
 ___repeat:
-	inc word ptr[line]
 	mov ax,[line]
 	call printnum
 	call println
@@ -4042,6 +4041,7 @@ ___repeat:
 	mov di,er_ouferr
 	jmp ___passerr
 ___nowrite:
+	inc word ptr[line]
 	jmp ___repeat
 ___pass:
 	mov cx,1

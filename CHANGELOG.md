@@ -8,3 +8,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Start using file `CHANGELOG.md` to make it easier for users and contributors
   to see precisely what notable changes have been made between each release (or
   version) of the project.
+
+### Fixed
+- Line number in message "Error at line ..." is off by one.
