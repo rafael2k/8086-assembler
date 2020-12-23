@@ -3748,7 +3748,7 @@ ___linelenok:
 	call addSymbol
 	cmp cx,0
 	jne ___emptyLabel
-	jmp ___encodeMnemonic
+	jmp ___encodeLine
 ___emptylabel:
 	mov ax,0
 	mov di,mnemonicstore
