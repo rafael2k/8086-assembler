@@ -39,7 +39,7 @@ er_illidir:db "Illegal Expression!",0
 er_ptrexp:db "`PTR' Expected!",0
 er_ptrtoolarge: db "Pointer Too Large!",0
 er_inviform:db "Invalid Instruction Format!",0
-er_badregmix:db "Invalid register size!",0
+er_badregmix:db "Invalid Register Size!",0
 er_invnumform:db "Bad Literal!",0
 er_littoolarge:db "Literal Too Large!",0
 er_offtoolarge:db "Address Too Far!",0
