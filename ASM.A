@@ -2960,6 +2960,7 @@ codeIncDec:
 	mov cx,0
 	jmp ___codeIncDec
 ___idseg:
+	pop ax
 	mov di,er_inviform
 	mov ax,0
 	mov cx,0
