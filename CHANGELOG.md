@@ -12,4 +12,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Line number in message "Error at line ..." is off by one.
-- Prints incomplete error message, if symbol name too long or too many symbols
+- Prints incomplete error message, if symbol name too long or too many symbols.
+- Uses DOS 2.0 functions, but doesn't check version.
