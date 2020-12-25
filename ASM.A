@@ -3884,8 +3884,14 @@ openfiles:
 	jmp ___tiser
 ___norer:
 	mov [inf],ax
+	call strlen
+	xchg bx,ax	; bx = result
 	mov al,'.'
 	call strpos
+	cmp ax,bx	; workaround strpos() flaw
+	jbe ___dotfound
+	xchg ax,bx	; ax = strlen() result
+___dotfound:
 	mov bx,ax
 	mov word ptr [bx+di],0432eh ;(".c")
 	mov word ptr [bx+di+2],04d4fh ;("om")

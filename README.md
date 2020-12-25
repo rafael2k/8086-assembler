@@ -30,11 +30,9 @@ created by Stephen Duffy in 2001. In December 2020 Robert Riebisch started maint
 
 ## Known Bugs
 
-1. If `infile` has no file extension, then the assembler will overwrite
-   `infile`.
-2. `dec r/m8`, `dec r/m16`, and `inc r/m8` instructions are encoded
+1. `dec r/m8`, `dec r/m16`, and `inc r/m8` instructions are encoded
    incorrectly.
-3. Better avoid whitespace around the comma between instruction operands.
+2. Better avoid whitespace around the comma between instruction operands.
 
 ## System Requirements
 
@@ -50,9 +48,6 @@ Type at the command prompt:
     asm.com infile.a
 
 This will generate `infile.com`.
-
-Note: The source file needs to be specified with its extension! See "Known
-Bugs" section.
 
 ## Language
 
