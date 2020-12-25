@@ -1,3 +1,13 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; `ASM.A' -- Source code for 8086 assembler main executable `ASM.COM'.
+;
+; Copyright (c) 2001 Stephen Duffy <scfduffy@gmail.com>
+; Copyright (c) 2020 Robert Riebisch <rr@bttr-software.de>
+;
+; Usage of the works is permitted under the terms of the GNU GPL v2.
+; See `LICENSE' file for details.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 maxexplen equ 80
 maxsymlen equ 30
 symstack equ 0b000h
