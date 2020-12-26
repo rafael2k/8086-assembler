@@ -1564,8 +1564,10 @@ mnemonics:
 	db "into",0,0,0,     70h
 	db "iret",0,0,0,     71h
 	db "ja",0,0,0,0,0,   47h
+	db "jae",0,0,0,0,    43h
 	db "jb",0,0,0,0,0,   42h
 	db "jbe",0,0,0,0,    46h
+	db "jc",0,0,0,0,0,   42h
 	db "jcxz",0,0,0,     0e3h
 	db "je",0,0,0,0,0,   44h
 	db "jg",0,0,0,0,0,   4fh
@@ -1573,14 +1575,22 @@ mnemonics:
 	db "jl",0,0,0,0,0,   4ch
 	db "jle",0,0,0,0,    4eh
 	db "jmp",0,0,0,0,    3ch
+	db "jna",0,0,0,0,    46h
+	db "jnae",0,0,0,     42h
 	db "jnb",0,0,0,0,    43h
+	db "jnbe",0,0,0,     47h
+	db "jnc",0,0,0,0,    43h
 	db "jne",0,0,0,0,    45h
 	db "jng",0,0,0,0,    4eh
+	db "jnge",0,0,0,     4ch
 	db "jnl",0,0,0,0,    4dh
+	db "jnle",0,0,0,     4fh
 	db "jno",0,0,0,0,    41h
+	db "jnp",0,0,0,0,    4bh
 	db "jns",0,0,0,0,    49h
 	db "jnz",0,0,0,0,    45h
 	db "jo",0,0,0,0,0,   40h
+	db "jp",0,0,0,0,0,   4ah
 	db "jpe",0,0,0,0,    4ah
 	db "jpo",0,0,0,0,    4bh
 	db "js",0,0,0,0,0,   48h

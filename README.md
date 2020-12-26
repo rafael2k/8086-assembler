@@ -85,9 +85,9 @@ Conventional instructions in alphabetical order, grouped by first letter.
 * **E** `es:`
 * **H** `hlt`
 * **I** `idiv`, `imul`, `in`, `inc`, `int`, `into`, `iret`
-* **J** `ja`, `jb`, `jbe`, `jcxz`, `je`, `jg`, `jge`, `jl`, `jle`, `jmp`,
-  `jnb`, `jne`, `jng`, `jnl`, `jno`, `jns`, `jnz`, `jo`, `jpe`, `jpo`, `js`,
-  `jz`
+* **J** `ja`, `jae`, `jb`, `jbe`, `jc`, `jcxz`, `je`, `jg`, `jge`, `jl`, `jle`,
+  `jmp`, `jna`, `jnae`, `jnb`, `jnbe`, `jnc`, `jne`, `jng`, `jnge`, `jnl`,
+  `jnle`, `jno`, `jnp`, `jns`, `jnz`, `jo`, `jp`, `jpe`, `jpo`, `js`, `jz`
 * **L** `lahf`, `lds`, `lea`, `les`, `lock`, `lodsb`, `lodsw`, `loop`,
   `loopnz`, `loopz`
 * **M** `mov`, `movsb`, `movsw`, `mul`
@@ -103,10 +103,8 @@ Conventional instructions in alphabetical order, grouped by first letter.
 
 Notes:
 
-1. To save memory and disk space many instruction aliases are not implemented.
-   For example, if you would like to code `jnbe`, then use `ja` instead.
-2. Prefix instructions `lock`, `repnz`, and `repz` have to be on its own line.
-3. You can use `int 3` to emit the special `int3` instruction.
+1. Prefix instructions `lock`, `repnz`, and `repz` have to be on its own line.
+2. You can use `int 3` to emit the special `int3` instruction.
 
 For a detailed description of each instruction, see, e.g.,
 [Complete 8086 instruction set](http://amb.osdn.io/phpamb.php?fname=lib/8086set.amb),

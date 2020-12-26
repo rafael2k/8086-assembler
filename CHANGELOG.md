@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - A short documentation is now in file `README.md`.
 - Print number of lines processed after each *pass*.
 - Print number of bytes written to `outfile` after second pass.
+- Support for all missing `Jcc` aliases.
 
 ### Removed
 - Print updated number of lines processed after each *line* to speed up.
