@@ -94,7 +94,8 @@ Conventional instructions in alphabetical order, grouped by first letter.
 * **N** `neg`, `nop`, `not`
 * **O**: `or`, `out`
 * **P**: `pop`, `popf`, `push`, `pushf`
-* **R** `rcl`, `rcr`, `repnz`, `repz`, `ret`, `retf`, `rol`, `ror`
+* **R** `rcl`, `rcr`, `rep`, `repe`, `repne`, `repnz`, `repz`, `ret`, `retf`,
+  `rol`, `ror`
 * **S** `sahf`, `sar`, `sbb`, `scasb`, `scasw`, `shl`, `shr`, `ss:`, `stc`,
   `std`, `sti`, `stosb`, `stosw`, `sub`
 * **T** `test`
@@ -103,7 +104,7 @@ Conventional instructions in alphabetical order, grouped by first letter.
 
 Notes:
 
-1. Prefix instructions `lock`, `repnz`, and `repz` have to be on its own line.
+1. Prefix instructions `lock` and `repCC` have to be on its own line.
 2. You can use `int 3` to emit the special `int3` instruction.
 
 For a detailed description of each instruction, see, e.g.,

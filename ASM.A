@@ -1622,6 +1622,9 @@ mnemonics:
 	db "pushf",0,0,      67h
 	db "rcl",0,0,0,0,    12h
 	db "rcr",0,0,0,0,    13h
+	db "rep",0,0,0,0,    83h
+	db "repe",0,0,0,     83h
+	db "repne",0,0,      82h
 	db "repnz",0,0,      82h
 	db "repz",0,0,0,     83h
 	db "ret",0,0,0,0,    6bh
