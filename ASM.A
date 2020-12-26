@@ -1603,6 +1603,8 @@ mnemonics:
 	db "lodsb",0,0,      5ch
 	db "lodsw",0,0,      5dh
 	db "loop",0,0,0,     0e2h
+	db "loope",0,0,      0e1h
+	db "loopne",0,       0e0h
 	db "loopnz",0,       0e0h
 	db "loopz",0,0,      0e1h
 	db "mov",0,0,0,0,    61h

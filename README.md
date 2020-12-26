@@ -88,8 +88,8 @@ Conventional instructions in alphabetical order, grouped by first letter.
 * **J** `ja`, `jae`, `jb`, `jbe`, `jc`, `jcxz`, `je`, `jg`, `jge`, `jl`, `jle`,
   `jmp`, `jna`, `jnae`, `jnb`, `jnbe`, `jnc`, `jne`, `jng`, `jnge`, `jnl`,
   `jnle`, `jno`, `jnp`, `jns`, `jnz`, `jo`, `jp`, `jpe`, `jpo`, `js`, `jz`
-* **L** `lahf`, `lds`, `lea`, `les`, `lock`, `lodsb`, `lodsw`, `loop`,
-  `loopnz`, `loopz`
+* **L** `lahf`, `lds`, `lea`, `les`, `lock`, `lodsb`, `lodsw`, `loop`, `loope`,
+  `loopne`, `loopnz`, `loopz`
 * **M** `mov`, `movsb`, `movsw`, `mul`
 * **N** `neg`, `nop`, `not`
 * **O**: `or`, `out`
