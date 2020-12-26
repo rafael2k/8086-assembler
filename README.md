@@ -22,6 +22,7 @@ created by Stephen Duffy in 2001. In December 2020 Robert Riebisch started maint
 * No support for declaring uninitialized data.
 * No support for macros.
 * No support for including other source files.
+* No support for listings.
 * Very limited support for expressions, i.e., only something like
   `mov al,[bx+di]` and `mov ax,word ptr[codestore+2]` works.
 * Supports only DOS line endings (CRLF) in source file.
@@ -31,7 +32,8 @@ created by Stephen Duffy in 2001. In December 2020 Robert Riebisch started maint
 ## Known Bugs
 
 1. `dec r/m8`, `dec r/m16`, and `inc r/m8` instructions are encoded
-   incorrectly.
+   incorrectly. This also applies to the `byte ptr` or `word ptr` variants of
+   `div`, `idiv`, `imul`, `mul`, `neg`, `not`, and `push`.
 2. Better avoid whitespace around the comma between instruction operands.
 
 ## System Requirements
@@ -100,8 +102,7 @@ Notes:
 
 1. To save memory and disk space many instruction aliases are not implemented.
    For example, if you would like to code `jnbe`, then use `ja` instead.
-2. `repnz`/`repz` and the accompanying string instruction need to be on
-   separate lines.
+2. Prefix instructions `lock`, `repnz`, and `repz` have to be on its own line.
 3. You can use `int 3` to emit the special `int3` instruction.
 
 For a detailed description of each instruction, see, e.g.,
