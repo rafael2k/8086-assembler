@@ -9,6 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   to see precisely what notable changes have been made between each release (or
   version) of the project.
 - A short documentation is now in file `README.md`.
+- Print number of lines processed after each *pass*.
+- Print number of bytes written to `outfile` after second pass.
+
+### Removed
+- Print updated number of lines processed after each *line* to speed up.
 
 ### Fixed
 - Line number in message "Error at line ..." is off by one.

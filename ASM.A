@@ -41,29 +41,31 @@ dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-er_baddos:db "DOS 2.0 Or Higher Required!",13,10,0
-er_strtoolong:db "String Too Long!",0
-er_linetoolong:db "Line Too Long!",0
-er_unknownmne:db "Unknown Mnemonic!",0
-er_invparams:db "Illegal Parameters!",0
-er_illidir:db "Illegal Expression!",0
-er_ptrexp:db "`PTR' Expected!",0
-er_ptrtoolarge: db "Pointer Too Large!",0
-er_inviform:db "Invalid Instruction Format!",0
-er_badregmix:db "Invalid Register Size!",0
-er_invnumform:db "Bad Literal!",0
-er_littoolarge:db "Literal Too Large!",0
-er_offtoolarge:db "Address Too Far!",0
-er_toomanysym:db "Too Many Symbols!",0
-er_invsymnam:db "Symbol Name Too Long!",0
-er_undefsym:db "Unknown Symbol!",0
-er_inferr:db "Input File Error!",0
-er_ouferr:db "Output File Error!",0
+er_baddos:db "DOS 2.0 or higher required",13,10,0
+er_strtoolong:db "String too long",13,10,0
+er_linetoolong:db "Line too long",13,10,0
+er_unknownmne:db "Unknown mnemonic",13,10,0
+er_invparams:db "Illegal parameters",13,10,0
+er_illidir:db "Illegal expression",13,10,0
+er_ptrexp:db "`PTR' expected",13,10,0
+er_ptrtoolarge: db "Pointer too large",13,10,0
+er_inviform:db "Invalid instruction format",13,10,0
+er_badregmix:db "Invalid register size",13,10,0
+er_invnumform:db "Bad literal",13,10,0
+er_littoolarge:db "Literal too large",13,10,0
+er_offtoolarge:db "Address too far",13,10,0
+er_toomanysym:db "Too many symbols",13,10,0
+er_invsymnam:db "Symbol name too long",13,10,0
+er_undefsym:db "Unknown symbol",13,10,0
+er_inferr:db "Input file error",13,10,0
+er_ouferr:db "Output file error",13,10,0
 assumedbase:dw 10
 nextSymbol:dw symstack
 symbolLoad:dw 0
 curip:dw 0
 codebase:dw 100h
+codelen: dw 0
+line: dw 0
 strlen:
 	push di
 	push cx
@@ -3833,15 +3835,6 @@ printnum:
 	pop bx
 	pop di
 	ret
-println:
-	push ax
-	push dx
-	mov ah,6
-	mov dl,13
-	int 21h
-	pop dx
-	pop ax
-	ret
 prints:
 	push ax
 	push bx
@@ -4020,7 +4013,6 @@ ___readln:
 	pop bx
 	pop ax
 	ret
-line: dw 0
 pass:
 	mov dx,cx
 	mov word ptr[line],1
@@ -4030,9 +4022,6 @@ pass:
 	mov cx,[codebase]
 	mov word ptr[curip],cx
 ___repeat:
-	mov ax,[line]
-	call printnum
-	call println
 	call readln
 	cmp [eof],2
 	je ___pass
@@ -4054,6 +4043,7 @@ ___repeat:
 	mov dx,codestore
 	int 21h
 	pop dx
+	add [codelen],ax
 	jnb ___nowrite
 	mov cx,0
 	mov di,er_ouferr
@@ -4066,23 +4056,32 @@ ___pass:
 ___passerr:
 	ret
 pass1:
-	db "     : lines processed in pass 1.",0
+	db "Pass 1: ",0
 pass2:
-	db "     : lines processed in pass 2.",0
-clrline:
-	db "                                 ",0
+	db "Pass 2: ",0
+linesproc:
+	db " lines processed",13,10,0
+crlf:
+	db 13,10,0
+emitted:
+	db " bytes emitted",13,10,0
 errline:
 	db "Error at line ",0
 colon:
 	db ": ",0
 tab:
 	db "  ",0
-prtline:
-	db 13,10,"   ",0
-message:
-	db "8086 Assembler for DOS.  Stephen Duffy 2001.",0
+signature:
+	db "8086 Assembler for DOS",13,10
+	db "Copyright (c) 2001 Stephen Duffy",13,10
+	db "Copyright (c) 2020 Robert Riebisch",13,10
+	db "[Under GNU GPL v2]",13,10
+	db 13,10,0
+; FIXME even prints tab on non-code errors, e.g., er_inferr
 printinst:
 	push di
+	mov di,tab
+	call prints
 	mov di,labelstore
 	call prints
 	mov di,tab
@@ -4102,39 +4101,46 @@ assemble:
 	or al,al	; not 0 means DOS 2.0 or higher
 	jnz ___dosok
 	mov di,er_baddos
-	jmp ___prints
+	jmp ___error
 ___dosok:
 	call openfiles
 	cmp cx,0
 	je ___error
-	mov di,pass1
-	call prints
-	call println
 	mov cx,0
 	call pass
 	cmp cx,0
 	je ___error
+; print pass 1 statistics
+	mov di,pass1
+	call prints
+	mov ax,[line]
+	call printnum
+	mov di,linesproc
+	call prints
 	call rewind
 	call sortsym
-	mov di,pass2
-	call prints
-	call println
 	mov cx,1
 	call pass
 	cmp cx,0
 	je ___error
-	mov di,clrline
+; print pass 2 statistics
+	mov di,pass2
 	call prints
-	call println
-	mov di,message
-___prints:
+	mov ax,[line]
+	call printnum
+	mov di,linesproc
 	call prints
-	int 20h
+	mov di,crlf
+	call prints
+	mov ax,[codelen]
+	call printnum
+	mov di,emitted
+	call prints
+	jmp ___assemble
 ___error:
 	push di
-	mov di,clrline
+	mov di,signature
 	call prints
-	call println
 	mov di,errline
 	call prints
 	mov ax,[line]
@@ -4143,9 +4149,10 @@ ___error:
 	call prints
 	pop di
 	call prints
-	mov di,prtline
-	call prints
 	call printinst
+	mov di,crlf
+	call prints
 	call closefiles
+___assemble:
 	int 20h
 ___endofcode:
