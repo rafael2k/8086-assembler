@@ -106,6 +106,7 @@ Notes:
 
 1. Prefix instructions `lock` and `repCC` have to be on its own line.
 2. You can use `int 3` to emit the special `int3` instruction.
+3. `rep` is an alias to `repe`.
 
 For a detailed description of each instruction, see, e.g.,
 [Complete 8086 instruction set](http://amb.osdn.io/phpamb.php?fname=lib/8086set.amb),

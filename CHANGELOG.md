@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support `loope` and `loopne` aliases.
 - Support `rep`, `repe`, and `repne` aliases.
 
+### Changed
+- Correct capitalization for error messages.
+
 ### Removed
 - Print updated number of lines processed after each *line* to speed up.
 
