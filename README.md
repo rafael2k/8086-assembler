@@ -36,7 +36,7 @@ created by Stephen Duffy in 2001. In December 2020 Robert Riebisch started maint
    `div`, `idiv`, `imul`, `mul`, `neg`, `not`, and `push`.
 2. Better avoid whitespace around the comma between instruction operands.
 3. `lds` and `les` instructions always (?) give errors. -- Reported by Japheth.
-4. Neither duplicate symbols nor non-existant symbols are recognized. --
+4. Neither duplicate symbols nor non-existent symbols are recognized. --
    Reported by Japheth.
 
 ## System Requirements
