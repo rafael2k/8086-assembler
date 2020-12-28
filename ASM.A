@@ -41,24 +41,29 @@ dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-er_baddos:db "DOS 2.0 or higher required",13,10,0
-er_strtoolong:db "String too long",13,10,0
-er_linetoolong:db "Line too long",13,10,0
-er_unknownmne:db "Unknown mnemonic",13,10,0
-er_invparams:db "Illegal parameters",13,10,0
-er_illidir:db "Illegal expression",13,10,0
-er_ptrexp:db "`PTR' expected",13,10,0
-er_ptrtoolarge: db "Pointer too large",13,10,0
-er_inviform:db "Invalid instruction format",13,10,0
-er_badregmix:db "Invalid register size",13,10,0
-er_invnumform:db "Bad literal",13,10,0
-er_littoolarge:db "Literal too large",13,10,0
-er_offtoolarge:db "Address too far",13,10,0
-er_toomanysym:db "Too many symbols",13,10,0
-er_invsymnam:db "Symbol name too long",13,10,0
-er_undefsym:db "Unknown symbol",13,10,0
-er_inferr:db "Input file error",13,10,0
-er_ouferr:db "Output file error",13,10,0
+; error messages regarding source code
+;  return code for DOS + ASCIIZ message for user
+er_strtoolong:	db   1,"String too long",13,10,0
+er_linetoolong: db   2,"Line too long",13,10,0
+er_unknownmne:	db   3,"Unknown mnemonic",13,10,0
+er_invparams:	db   4,"Illegal parameters",13,10,0
+er_illidir:	db   5,"Illegal expression",13,10,0
+er_ptrexp:	db   6,"`PTR' expected",13,10,0
+er_ptrtoolarge: db   7,"Pointer too large",13,10,0
+er_inviform:	db   8,"Invalid instruction format",13,10,0
+er_badregmix:	db   9,"Invalid register size",13,10,0
+er_invnumform:	db  10,"Bad literal",13,10,0
+er_littoolarge: db  11,"Literal too large",13,10,0
+er_offtoolarge: db  12,"Address too far",13,10,0
+er_toomanysym:	db  13,"Too many symbols",13,10,0
+er_invsymnam:	db  14,"Symbol name too long",13,10,0
+er_undefsym:	db  15,"Unknown symbol",13,10,0
+; other error messages
+;  return codes >200 will skip calling printinst() function on error
+er_inferr:	db 201,"Input file error",13,10,0
+er_ouferr:	db 202,"Output file error",13,10,0
+; special error message for DOS 1.x (no return code possible)
+er_baddos:	db     "DOS 2.0 or higher required",13,10,0
 assumedbase:dw 10
 nextSymbol:dw symstack
 symbolLoad:dw 0
@@ -66,6 +71,7 @@ curip:dw 0
 codebase:dw 100h
 codelen: dw 0
 line: dw 0
+curpass: dw 1
 strlen:
 	push di
 	push cx
@@ -4070,104 +4076,115 @@ ___pass:
 	mov cx,1
 ___passerr:
 	ret
-pass1:
-	db "Pass 1: ",0
-pass2:
-	db "Pass 2: ",0
-linesproc:
-	db " lines processed",13,10,0
-crlf:
-	db 13,10,0
-emitted:
-	db " bytes emitted",13,10,0
-errline:
-	db "Error at line ",0
-colon:
-	db ": ",0
-tab:
-	db "  ",0
-signature:
+msg_pass:	db ">> Pass ",0
+msg_started:	db " started",13,10,0
+msg_finished:	db "<< Finished",13,10,0
+msg_linesproc:	db " lines processed",13,10,0
+msg_byteswrit:	db " bytes written",13,10,0
+msg_errline:	db "Error at line ",0
+msg_colon:	db ": ",0
+msg_tab:	db "  ",0
+msg_crlf:	db 13,10,0
+msg_signon:
 	db "8086 Assembler for DOS",13,10
 	db "Copyright (c) 2001 Stephen Duffy",13,10
 	db "Copyright (c) 2020 Robert Riebisch",13,10
 	db "[Under GNU GPL v2]",13,10
 	db 13,10,0
-; FIXME even prints tab on non-code errors, e.g., er_inferr
 printinst:
 	push di
-	mov di,tab
+	mov di,msg_tab
 	call prints
 	mov di,labelstore
 	call prints
-	mov di,tab
+	mov di,msg_tab
 	call prints
 	mov di,mnemonicStore
 	call prints
-	mov di,tab
+	mov di,msg_tab
 	call prints
 	mov di,expsetstore
+	call prints
+	mov di,msg_crlf
 	call prints
 	pop di
 	ret
 assemble:
+	mov di,msg_signon
+	call prints
 ; check DOS version
 	mov ah,30h
 	int 21h
-	or al,al	; not 0 means DOS 2.0 or higher
-	jnz ___dosok
+	or al,al	; AL=0? not 0 means DOS 2.0 or higher
+	jnz ___nextpass
 	mov di,er_baddos
-	jmp ___error
-___dosok:
-	call openfiles
-	cmp cx,0
-	je ___error
-	mov cx,0
-	call pass
-	cmp cx,0
-	je ___error
-; print pass 1 statistics
-	mov di,pass1
 	call prints
-	mov ax,[line]
+	ret
+___nextpass:
+	mov di,msg_pass
+	call prints
+	mov ax,[curpass]
 	call printnum
-	mov di,linesproc
+	mov di,msg_started
 	call prints
+	cmp [curpass],2
+	je ___pass2
+	call openfiles	; on pass 1 only
+	or cx,cx	; CX=0?
+	je ___error
+	xor cx,cx	; CX:=0
+	jmp ___anypass
+___pass2:
 	call rewind
 	call sortsym
 	mov cx,1
+___anypass:
 	call pass
-	cmp cx,0
+	or cx,cx	; CX=0?
 	je ___error
-; print pass 2 statistics
-	mov di,pass2
-	call prints
-	mov ax,[line]
+	mov ax,[line]	; start printing pass statistics
 	call printnum
-	mov di,linesproc
+	mov di,msg_linesproc
 	call prints
-	mov di,crlf
-	call prints
-	mov ax,[codelen]
+	cmp [curpass],2
+	jne ___notpass2
+	mov ax,[codelen]	; print on pass 2 only
 	call printnum
-	mov di,emitted
+	mov di,msg_byteswrit
 	call prints
-	jmp ___assemble
+___notpass2:
+	mov di,msg_finished
+	call prints
+	mov ax,[curpass]
+	cmp ax,1
+	jne ___notpass1
+	mov di,msg_crlf	; print on pass 1 only
+	call prints
+___notpass1:
+	inc ax
+	cmp ax,2
+	ja ___assemble	; no more passes
+	mov [curpass],ax
+	jmp ___nextpass
+; print error message (and top of stores)
 ___error:
-	push di
-	mov di,signature
-	call prints
-	mov di,errline
+	mov si,di
+	mov di,msg_errline
 	call prints
 	mov ax,[line]
 	call printnum
-	mov di,colon
+	mov di,msg_colon
 	call prints
-	pop di
-	call prints
+	cld
+	lodsb	; load return code from error message
+	mov di,si
+	call prints	; print error message
+	cmp al,200	; return code >200?
+	ja ___assemble
 	call printinst
-	mov di,crlf
-	call prints
-	call closefiles
 ___assemble:
-	int 20h
+	call closefiles
+; return to DOS with return code in AL
+	mov ah,4ch
+	int 21h
 ___endofcode:
