@@ -156,6 +156,16 @@ hello, world
 
 ```
 
+## Building 8086 Assembler
+
+To build `ASM.COM` no external tools are required.
+
+Just type:
+
+    asm asm.a
+
+That's all.
+
 ## License
 
 Copyright (c) 2001 Stephen Duffy <scfduffy@gmail.com>  
