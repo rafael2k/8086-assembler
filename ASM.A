@@ -12,7 +12,7 @@ maxexplen equ 80
 maxsymlen equ 30
 symstack equ 0b000h
 buflen equ 80
-jmp assemble
+jmp start
 lineStore:
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -4109,7 +4109,7 @@ printinst:
 	call prints
 	pop di
 	ret
-assemble:
+start:
 	mov di,msg_signon
 	call prints
 ; check DOS version
@@ -4163,7 +4163,7 @@ ___notpass2:
 ___notpass1:
 	inc ax
 	cmp ax,2
-	ja ___assemble	; no more passes
+	ja ___start	; no more passes
 	mov [curpass],ax
 	jmp ___nextpass
 ; print error message (and top of stores)
@@ -4180,9 +4180,9 @@ ___error:
 	mov di,si
 	call prints	; print error message
 	cmp al,200	; return code >200?
-	ja ___assemble
+	ja ___start
 	call printinst
-___assemble:
+___start:
 	call closefiles
 ; return to DOS with return code in AL
 	mov ah,4ch
