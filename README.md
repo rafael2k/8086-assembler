@@ -4,7 +4,9 @@
 
 "8086 Assembler for DOS" (or `ASM.COM` for short) is a small 16-bit DOS-based
 two-pass self-hosting assembler for the x86 assembly language. -- It was
-created by Stephen Duffy in 2001. In December 2020 Robert Riebisch started maintaining this fork.
+created by Stephen Duffy in 2001. In December 2020 Robert Riebisch started
+maintaining his own fork at
+[https://github.com/bttrx/8086-assembler/](https://github.com/bttrx/8086-assembler/).
 
 ## Highlights
 
@@ -115,7 +117,9 @@ Notes:
 
 For a detailed description of each instruction, see, e.g.,
 [Complete 8086 instruction set](http://amb.osdn.io/phpamb.php?fname=lib/8086set.amb),
-[NASM 2.05 based x86 Instruction Reference](http://amb.osdn.io/phpamb.php?fname=lib/insref.amb), or [NASM 2.05 based x86 Instruction Reference](https://ulukai.org/ecm/insref.htm) (different layout).
+[NASM 2.05 based x86 Instruction Reference](http://amb.osdn.io/phpamb.php?fname=lib/insref.amb),
+or [NASM 2.05 based x86 Instruction Reference](https://ulukai.org/ecm/insref.htm)
+(different layout).
 
 ### Special Instructions (Pseudo-ops)
 
@@ -130,7 +134,8 @@ For a detailed description of each instruction, see, e.g.,
 * `word` Use with `ptr` to specify a variable as a word (2 bytes).
 
 `ASM.COM` always sets a program's origin address to 100h. The pseudo-op `org`,
-known from other assemblers, e.g., [NASM](https://www.nasm.us/), is *not* supported.
+known from other assemblers, e.g., [NASM](https://www.nasm.us/), is *not*
+supported.
 
 ## Example (Short)
 
