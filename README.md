@@ -154,7 +154,26 @@ Type to build:
 
     asm hello.a
 
-Running generated `HELLO.COM` will then produce:
+While generating `HELLO.COM` 8086 Assembler will show the following:
+
+```
+8086 Assembler for DOS
+Copyright (c) 2001 Stephen Duffy
+Copyright (c) 2020 Robert Riebisch
+[Under GNU GPL v2]
+
+>> Pass 1 started
+12 lines processed
+<< Finished
+
+>> Pass 2 started
+12 lines processed
+23 bytes written
+<< Finished
+
+```
+
+Running `HELLO.COM` will then produce:
 
 ```
 hello, world
