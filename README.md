@@ -54,6 +54,11 @@ Type at the command prompt:
 
 This will generate `infile.com`.
 
+On success, `ASM.COM` prints "NNN bytes written" and exits to DOS with
+errorlevel 0. On error, `ASM.COM` prints a relevant error message and exits
+with errorlevel<=200 for source code errors or >200 for all other errors. For
+details see `ASM.A` file.
+
 ## Language
 
 ### Syntax

@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for all missing `Jcc` aliases.
 - Support `loope` and `loopne` aliases.
 - Support `rep`, `repe`, and `repne` aliases.
+- Return to DOS with errorlevel.
 
 ### Changed
 - Correct capitalization for error messages.
