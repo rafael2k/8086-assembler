@@ -71,7 +71,7 @@ curip:dw 0
 codebase:dw 100h
 codelen: dw 0
 line: dw 0
-curpass: dw 1
+curpass: db 1
 strlen:
 	push di
 	push cx
@@ -4120,20 +4120,22 @@ start:
 	mov di,er_baddos
 	call prints
 	ret
+; run two passes on the source code
 ___nextpass:
 	mov di,msg_pass
 	call prints
-	mov ax,[curpass]
+	mov al,[curpass]
+	cbw
 	call printnum
 	mov di,msg_started
 	call prints
-	cmp [curpass],2
+	cmp byte ptr[curpass],2
 	je ___pass2
 	call openfiles	; on pass 1 only
 	or cx,cx	; CX=0?
-	je ___error
+	jz ___error
 	xor cx,cx	; CX:=0
-	jmp ___anypass
+	jz ___anypass
 ___pass2:
 	call rewind
 	call sortsym
@@ -4141,12 +4143,12 @@ ___pass2:
 ___anypass:
 	call pass
 	or cx,cx	; CX=0?
-	je ___error
+	jz ___error
 	mov ax,[line]	; start printing pass statistics
 	call printnum
 	mov di,msg_linesproc
 	call prints
-	cmp [curpass],2
+	cmp byte ptr[curpass],2
 	jne ___notpass2
 	mov ax,[codelen]	; print on pass 2 only
 	call printnum
@@ -4155,17 +4157,18 @@ ___anypass:
 ___notpass2:
 	mov di,msg_finished
 	call prints
-	mov ax,[curpass]
-	cmp ax,1
+	mov al,[curpass]
+	cmp al,1
 	jne ___notpass1
 	mov di,msg_crlf	; print on pass 1 only
 	call prints
 ___notpass1:
-	inc ax
-	cmp ax,2
-	ja ___start	; no more passes
-	mov [curpass],ax
-	jmp ___nextpass
+	inc al
+	mov [curpass],al
+	cmp al,2
+	jbe ___nextpass
+	xor al,al	; AL:=0 return code
+	jz ___start	; no more passes
 ; print error message (and top of stores)
 ___error:
 	mov si,di
