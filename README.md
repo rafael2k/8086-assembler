@@ -169,12 +169,12 @@ Copyright (c) 2020 Robert Riebisch
 
 >> Pass 1 started
 12 lines processed
-<< Finished
+<< Finished successfully
 
 >> Pass 2 started
 12 lines processed
 23 bytes written
-<< Finished
+<< Finished successfully
 
 ```
 
