@@ -13,6 +13,44 @@ maxsymlen equ 30
 symstack equ 0b000h
 buflen equ 80
 jmp start
+msg_signon:
+	db "8086 Assembler for DOS",13,10
+	db "Copyright (c) 2001 Stephen Duffy",13,10
+	db "Copyright (c) 2020 Robert Riebisch",13,10
+	db "[Under GNU GPL v2]",13,10
+	db 13,10,0
+msg_pass:	db ">> Pass ",0
+msg_started:	db " started",13,10,0
+msg_finished:	db "<< Finished successfully",13,10,0
+msg_linesproc:	db " lines processed",13,10,0
+msg_byteswrit:	db " bytes written",13,10,0
+msg_errline:	db "Error at line ",0
+msg_colon:	db ": ",0
+msg_tab:	db "  ",0
+msg_crlf:	db 13,10,0
+; error messages regarding source code
+;  return code for DOS + ASCIIZ message for user
+er_strtoolong:	db   1,"String too long",13,10,0
+er_linetoolong: db   2,"Line too long",13,10,0
+er_unknownmne:	db   3,"Unknown mnemonic",13,10,0
+er_invparams:	db   4,"Illegal parameters",13,10,0
+er_illidir:	db   5,"Illegal expression",13,10,0
+er_ptrexp:	db   6,"`PTR' expected",13,10,0
+er_ptrtoolarge: db   7,"Pointer too large",13,10,0
+er_inviform:	db   8,"Invalid instruction format",13,10,0
+er_badregmix:	db   9,"Invalid register size",13,10,0
+er_invnumform:	db  10,"Bad literal",13,10,0
+er_littoolarge: db  11,"Literal too large",13,10,0
+er_offtoolarge: db  12,"Address too far",13,10,0
+er_toomanysym:	db  13,"Too many symbols",13,10,0
+er_invsymnam:	db  14,"Symbol name too long",13,10,0
+er_undefsym:	db  15,"Unknown symbol",13,10,0
+; other error messages
+;  return codes >200 will skip calling printinst() function on error
+er_inferr:	db 201,"Input file error",13,10,0
+er_ouferr:	db 202,"Output file error",13,10,0
+; special error message for DOS 1.x (no return code possible)
+er_baddos:	db     "DOS 2.0 or higher required",13,10,0
 lineStore:
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -41,37 +79,10 @@ dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-; error messages regarding source code
-;  return code for DOS + ASCIIZ message for user
-er_strtoolong:	db   1,"String too long",13,10,0
-er_linetoolong: db   2,"Line too long",13,10,0
-er_unknownmne:	db   3,"Unknown mnemonic",13,10,0
-er_invparams:	db   4,"Illegal parameters",13,10,0
-er_illidir:	db   5,"Illegal expression",13,10,0
-er_ptrexp:	db   6,"`PTR' expected",13,10,0
-er_ptrtoolarge: db   7,"Pointer too large",13,10,0
-er_inviform:	db   8,"Invalid instruction format",13,10,0
-er_badregmix:	db   9,"Invalid register size",13,10,0
-er_invnumform:	db  10,"Bad literal",13,10,0
-er_littoolarge: db  11,"Literal too large",13,10,0
-er_offtoolarge: db  12,"Address too far",13,10,0
-er_toomanysym:	db  13,"Too many symbols",13,10,0
-er_invsymnam:	db  14,"Symbol name too long",13,10,0
-er_undefsym:	db  15,"Unknown symbol",13,10,0
-; other error messages
-;  return codes >200 will skip calling printinst() function on error
-er_inferr:	db 201,"Input file error",13,10,0
-er_ouferr:	db 202,"Output file error",13,10,0
-; special error message for DOS 1.x (no return code possible)
-er_baddos:	db     "DOS 2.0 or higher required",13,10,0
-assumedbase:dw 10
-nextSymbol:dw symstack
-symbolLoad:dw 0
-curip:dw 0
-codebase:dw 100h
-codelen: dw 0
-line: dw 0
-curpass: db 1
+getsbuffer:
+dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+___getsbuffer:
 digitlist:
 db "00112233445566778899aAbBcCdDeEfFgGhHiIjJkK"
 db "lLmMnNoOpPqQrRsStToOpPqQrRsStTuUvVwWxXyYzZ",0
@@ -90,8 +101,6 @@ iregcomb: ;convs dl from "decodeIndirect" to exp type
 db 10,6,9,5,8,4,0,2,1
 db 0,1,2,3,4,5,6,7,6
 ___iregcomb:
-addrspec:dw 0
-containslabel:dw 0
 bptr: db "byte",0
 wptr: db "word",0
 dptr: db "dword",0
@@ -264,30 +273,21 @@ PseudoOps:
 	db "equ",0,0,0,0,0,2
 	db "=",0,0,0,0,0,0,0,2
 ___PseudoOps:
+assumedbase:dw 10
+nextSymbol:dw symstack
+symbolLoad:dw 0
+curip:dw 0
+codebase:dw 100h
+codelen: dw 0
+line: dw 0
+curpass: db 1
+addrspec:dw 0
+containslabel:dw 0
 inf:dw 0
 ouf:dw 0
 nextpos:dw 0
 bufend:dw 0
 eof:dw 0
-getsbuffer:
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-___getsbuffer:
-msg_pass:	db ">> Pass ",0
-msg_started:	db " started",13,10,0
-msg_finished:	db "<< Finished successfully",13,10,0
-msg_linesproc:	db " lines processed",13,10,0
-msg_byteswrit:	db " bytes written",13,10,0
-msg_errline:	db "Error at line ",0
-msg_colon:	db ": ",0
-msg_tab:	db "  ",0
-msg_crlf:	db 13,10,0
-msg_signon:
-	db "8086 Assembler for DOS",13,10
-	db "Copyright (c) 2001 Stephen Duffy",13,10
-	db "Copyright (c) 2020 Robert Riebisch",13,10
-	db "[Under GNU GPL v2]",13,10
-	db 13,10,0
 strlen:
 	push di
 	push cx
