@@ -275,7 +275,7 @@ dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ___getsbuffer:
 msg_pass:	db ">> Pass ",0
 msg_started:	db " started",13,10,0
-msg_finished:	db "<< Finished",13,10,0
+msg_finished:	db "<< Finished successfully",13,10,0
 msg_linesproc:	db " lines processed",13,10,0
 msg_byteswrit:	db " bytes written",13,10,0
 msg_errline:	db "Error at line ",0
