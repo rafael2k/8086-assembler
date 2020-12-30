@@ -8,17 +8,23 @@
 ; See `LICENSE' file for details.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-maxexplen equ 80
-maxsymlen equ 30
-symstack equ 0b000h
-buflen equ 80
-jmp start
-msg_signon:
-	db "8086 Assembler for DOS",13,10
-	db "Copyright (c) 2001 Stephen Duffy",13,10
-	db "Copyright (c) 2020 Robert Riebisch",13,10
-	db "[Under GNU GPL v2]",13,10
-	db 13,10,0
+maxexplen	equ 80
+maxsymlen	equ 30
+symstack	equ 0b000h
+buflen		equ 80
+
+	jmp start	; jump to main
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; data starts here
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; user interface messages except error messages
+msg_banner:	db "8086 Assembler for DOS",13,10
+		db "Copyright (c) 2001 Stephen Duffy",13,10
+		db "Copyright (c) 2020 Robert Riebisch",13,10
+		db "[Under GNU GPL v2]",13,10
+		db 13,10,0
 msg_pass:	db ">> Pass ",0
 msg_started:	db " started",13,10,0
 msg_finished:	db "<< Finished successfully",13,10,0
@@ -28,6 +34,7 @@ msg_errline:	db "Error at line ",0
 msg_colon:	db ": ",0
 msg_tab:	db "  ",0
 msg_crlf:	db 13,10,0
+
 ; error messages regarding source code
 ;  return code for DOS + ASCIIZ message for user
 er_strtoolong:	db   1,"String too long",13,10,0
@@ -51,6 +58,7 @@ er_inferr:	db 201,"Input file error",13,10,0
 er_ouferr:	db 202,"Output file error",13,10,0
 ; special error message for DOS 1.x (no return code possible)
 er_baddos:	db     "DOS 2.0 or higher required",13,10,0
+
 lineStore:
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -83,14 +91,15 @@ getsbuffer:
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ___getsbuffer:
+
 digitlist:
-db "00112233445566778899aAbBcCdDeEfFgGhHiIjJkK"
-db "lLmMnNoOpPqQrRsStToOpPqQrRsStTuUvVwWxXyYzZ",0
+	db "00112233445566778899aAbBcCdDeEfFgGhHiIjJkK"
+	db "lLmMnNoOpPqQrRsStToOpPqQrRsStTuUvVwWxXyYzZ",0
 destructivedl:
-db "00112233445566778899aAbBcCdDeEfFgGhHiIjJkK"
-db "lLmMnNoOpPqQrRsStToOpPqQrRsStTuUvVwWxXyYzZ",0
+	db "00112233445566778899aAbBcCdDeEfFgGhHiIjJkK"
+	db "lLmMnNoOpPqQrRsStToOpPqQrRsStTuUvVwWxXyYzZ",0
 delimiters:
-db "ª `Ý!",'"',"%^&*()-+=[{]};:'~,<.>/?",92,"|",0
+	db "ª `Ý!",'"',"%^&*()-+=[{]};:'~,<.>/?",92,"|",0
 indirectRegs:
 	db "bp",0,1
 	db "bx",0,2
@@ -98,14 +107,14 @@ indirectRegs:
 	db "si",0,8
 ___indirectRegs:
 iregcomb: ;convs dl from "decodeIndirect" to exp type
-db 10,6,9,5,8,4,0,2,1
-db 0,1,2,3,4,5,6,7,6
+	db 10,6,9,5,8,4,0,2,1
+	db 0,1,2,3,4,5,6,7,6
 ___iregcomb:
-bptr: db "byte",0
-wptr: db "word",0
-dptr: db "dword",0
-qptr: db "qword",0
-aptr: db "ptr",0
+bptr:	db "byte",0
+wptr:	db "word",0
+dptr:	db "dword",0
+qptr:	db "qword",0
+aptr:	db "ptr",0
 farstring:
 	db "far",0
 regnames:
@@ -273,21 +282,27 @@ PseudoOps:
 	db "equ",0,0,0,0,0,2
 	db "=",0,0,0,0,0,0,0,2
 ___PseudoOps:
-assumedbase:dw 10
-nextSymbol:dw symstack
-symbolLoad:dw 0
-curip:dw 0
-codebase:dw 100h
-codelen: dw 0
-line: dw 0
-curpass: db 1
-addrspec:dw 0
-containslabel:dw 0
-inf:dw 0
-ouf:dw 0
-nextpos:dw 0
-bufend:dw 0
-eof:dw 0
+
+assumedbase:	dw 10
+nextSymbol:	dw symstack
+symbolLoad:	dw 0
+curip:		dw 0
+codebase:	dw 100h
+codelen:	dw 0
+line:		dw 0
+curpass:	db 1
+addrspec:	dw 0
+containslabel:	dw 0
+inf:		dw 0
+ouf:		dw 0
+nextpos:	dw 0
+bufend:		dw 0
+eof:		dw 0
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; code starts here (no more data)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 strlen:
 	push di
 	push cx
@@ -4110,7 +4125,7 @@ printinst:
 	pop di
 	ret
 start:
-	mov di,msg_signon
+	mov di,msg_banner
 	call prints
 ; check DOS version
 	mov ah,30h
