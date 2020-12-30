@@ -19,7 +19,7 @@ buflen		equ 80
 ; data starts here
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; user interface messages except error messages
+; user-interface messages except errors
 msg_banner:	db "8086 Assembler for DOS",13,10
 		db "Copyright (c) 2001 Stephen Duffy",13,10
 		db "Copyright (c) 2020 Robert Riebisch",13,10
@@ -37,59 +37,78 @@ msg_crlf:	db 13,10,0
 
 ; error messages regarding source code
 ;  return code for DOS + ASCIIZ message for user
-er_strtoolong:	db   1,"String too long",13,10,0
-er_linetoolong: db   2,"Line too long",13,10,0
-er_unknownmne:	db   3,"Unknown mnemonic",13,10,0
-er_invparams:	db   4,"Illegal parameters",13,10,0
-er_illidir:	db   5,"Illegal expression",13,10,0
-er_ptrexp:	db   6,"`PTR' expected",13,10,0
-er_ptrtoolarge: db   7,"Pointer too large",13,10,0
-er_inviform:	db   8,"Invalid instruction format",13,10,0
-er_badregmix:	db   9,"Invalid register size",13,10,0
-er_invnumform:	db  10,"Bad literal",13,10,0
-er_littoolarge: db  11,"Literal too large",13,10,0
-er_offtoolarge: db  12,"Address too far",13,10,0
-er_toomanysym:	db  13,"Too many symbols",13,10,0
-er_invsymnam:	db  14,"Symbol name too long",13,10,0
-er_undefsym:	db  15,"Unknown symbol",13,10,0
-; other error messages
-;  return codes >200 will skip calling printinst() function on error
-er_inferr:	db 201,"Input file error",13,10,0
-er_ouferr:	db 202,"Output file error",13,10,0
-; special error message for DOS 1.x (no return code possible)
-er_baddos:	db     "DOS 2.0 or higher required",13,10,0
+errmsg_strtoolong:	db   1,"String too long",13,10,0
+errmsg_linetoolong:	db   2,"Line too long",13,10,0
+errmsg_unknownmne:	db   3,"Unknown mnemonic",13,10,0
+errmsg_invparams:	db   4,"Illegal parameters",13,10,0
+errmsg_illidir:		db   5,"Illegal expression",13,10,0
+errmsg_ptrexp:		db   6,"`PTR' expected",13,10,0
+errmsg_ptrtoolarge:	db   7,"Pointer too large",13,10,0
+errmsg_inviform:	db   8,"Invalid instruction format",13,10,0
+errmsg_badregmix:	db   9,"Invalid register size",13,10,0
+errmsg_invnumform:	db  10,"Bad literal",13,10,0
+errmsg_littoolarge:	db  11,"Literal too large",13,10,0
+errmsg_offtoolarge:	db  12,"Address too far",13,10,0
+errmsg_toomanysym:	db  13,"Too many symbols",13,10,0
+errmsg_invsymnam:	db  14,"Symbol name too long",13,10,0
+errmsg_undefsym:	db  15,"Unknown symbol",13,10,0
 
+; other error messages ("runtime environment")
+;  return codes >200 will skip calling printinst() function on error
+errmsg_inferr:		db 201,"Input file error",13,10,0
+errmsg_ouferr:		db 202,"Output file error",13,10,0
+
+; special error message for DOS 1.x (no return code possible)
+errmsg_baddos:		db     "DOS 2.0 or higher required",13,10,0
+
+; temporary data
+;  When `ASM.COM' will support uninitialized data, these are candidates to
+;  save 880 bytes disk space. Need to call an initialization function on
+;  program start then.
+
+; each 80 bytes large
 lineStore:
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 labelStore:
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mnemonicStore:
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 expsetStore:
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 exp1Store:
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 exp2Store:
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+; each 160 bytes large
 codeStore:
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 tempBuffer:
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+; FIXME
+; Move `getsbuffer' before `codeStore' and on `ASM.COM ASM.A' you will get:
+;  >> Pass 1 started
+;  Error at line 50: Bad literal
+;    errmsg_littoolarge  db  11,"
+; Probably something gets overwritten.
+
+; 80 bytes large
 getsbuffer:
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dw 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ___getsbuffer:
 
 digitlist:
@@ -1030,7 +1049,7 @@ ___pass2get:
 	je ___symfound
 	xor cx,cx
 	xor ax,ax
-	mov di,er_undefsym
+	mov di,errmsg_undefsym
 	jmp ___getsymbol
 ___symfound:
 	mov cx,1
@@ -1069,14 +1088,14 @@ addSymbol: ;(di=symbol name,ax=value) (cx=error if clr)
 	cmp ax,30
 	jl ___symLenOk
 	xor cx,cx
-	mov di,er_invsymnam
+	mov di,errmsg_invsymnam
 	jmp ___addSymbol
 ___symLenOk:
 	mov si,[nextsymbol]
 	cmp si,___endofcode
 	jnb ___symNumOk
 	xor cx,cx
-	mov di,er_toomanysym
+	mov di,errmsg_toomanysym
 	jmp ___addSymbol
 ___SymNumOk:
 	xchg si,di
@@ -1172,7 +1191,7 @@ decodeIndirect: ;(di)->al=byte,cx=error,dx=num if req
 	call unbracket
 	cmp cx,0
 	jne ___unbracketed
-	mov di,er_illidir
+	mov di,errmsg_illidir
 	jmp ___decodeIndirect
 ___unbracketed:
 	xor dx,dx   ;holds val for ind exp
@@ -1196,7 +1215,7 @@ ___nextparm:
 	test dl,al
 	jz ___noteireg
 ___illidirexit:
-	mov di,er_illidir
+	mov di,errmsg_illidir
 	xor cx,cx
 	pop ax
 	pop si
@@ -1249,7 +1268,7 @@ ___logaddress:
 	jmp ___illidirexit
 ___undeflabel:
 	pop ax
-	mov di,er_undefsym
+	mov di,errmsg_undefsym
 	xor cx,cx
 	pop ax
 	pop si
@@ -1267,7 +1286,7 @@ ___idexpokay:
 	and dl,79
 	cmp dl,1 ;test for [bp] alone (illegal!)
 	jne ___notbpalone
-	mov di,er_illidir
+	mov di,errmsg_illidir
 	xor cx,cx
 	jmp ___decodeIndirect
 ___notbpalone:
@@ -1286,7 +1305,7 @@ ___nextconv:
 	pop di
 	pop bx
 	mov cx,0
-	mov di,er_illidir
+	mov di,errmsg_illidir
 	jmp ___decodeIndirect
 ___convert:
 	add bx,9             ;move to conv line
@@ -1367,7 +1386,7 @@ ___badptr:
 	pop si
 	pop ax
 	mov cx,0
-	mov di,er_ptrexp
+	mov di,errmsg_ptrexp
 	ret
 ___bptr:
 	pop si
@@ -1580,7 +1599,7 @@ ___nuffspace:
 	jmp ___qstolw
 ___strtoolong:
 	xchg si,di
-	mov di,er_strtoolong
+	mov di,errmsg_strtoolong
 	xor cx,cx
 ___qstolw:
 	pop ax
@@ -1796,7 +1815,7 @@ ___sizeok:
 	je ___indok
 ___errexit:
 	xor cx,cx
-	mov di,er_invparams
+	mov di,errmsg_invparams
 	jmp ___indirectOrder
 ___indok:
 	xor ax,ax
@@ -1842,7 +1861,7 @@ ___defecerr:
 	pop ax
 	call unstrtok
 	pop di
-	mov di,er_illidir
+	mov di,errmsg_illidir
 	xor cx,cx
 	jmp ___checkExpression
 ___nextstrtok:
@@ -1932,7 +1951,7 @@ ___testlabel:
 	mov cx,1
 	jmp ___getregtype
 ___badexp1:
-	mov di,er_invparams
+	mov di,errmsg_invparams
 	xor cx,cx
 	jmp ___getregtype
 ___getregtype:
@@ -1983,7 +2002,7 @@ ___segadrnotalw:
 	pop cx
 	xor ax,ax
 	xor cx,cx
-	mov di,er_invparams
+	mov di,errmsg_invparams
 	jmp ___encodeTwoParam
 ___iswordr:
 	pop ax
@@ -2003,7 +2022,7 @@ ___badlit2p:
 	pop ax
 	pop cx
 	xor cx,cx
-	mov di,er_invparams
+	mov di,errmsg_invparams
 	jmp ___encodeTwoParam
 ___isexp:
 	pop ax
@@ -2032,7 +2051,7 @@ ___expokay:
 ___ptrtoobig:
 	xor ax,ax
 	xor cx,cx
-	mov di,er_ptrtoolarge
+	mov di,errmsg_ptrtoolarge
 	jmp ___encodeTwoParam
 ___codePar2:
 	push ax
@@ -2085,7 +2104,7 @@ ___notexpression:
 ___badreguse:
 	xor cx,cx
 	xor ax,ax
-	mov di,er_badregmix
+	mov di,errmsg_badregmix
 	jmp ___encodeTwoParam
 ___par2reg16:
 	push ax
@@ -2122,7 +2141,7 @@ ___notsegreg:
 ___badregmix:
 	xor cx,cx
 	xor ax,ax
-	mov di,er_badregmix
+	mov di,errmsg_badregmix
 	jmp ___encodeTwoParam
 ___par2seg:
 	push ax
@@ -2146,7 +2165,7 @@ ___par2seg:
 ___twosegerr:
 	xor cx,cx
 	xor ax,ax
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp ___encodetwoparam
 ___par2lit:
 	test ah,32
@@ -2162,7 +2181,7 @@ ___par2lit:
 ___litsegerr:
 	xor ax,ax
 	xor cx,cx
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp ___encodeTwoParam
 ___16bitlit:
 	pop ax
@@ -2184,13 +2203,13 @@ ___par2littoolrg:
 ___litistoolrg:
 	xor cx,cx
 	xor ax,ax
-	mov di,er_littoolarge
+	mov di,errmsg_littoolarge
 	jmp ___encodeTwoParam
 ___badpar2:
 	pop ax
 	xor cx,cx
 	xor ax,ax
-	mov di,er_invparams
+	mov di,errmsg_invparams
 	jmp encodeTwoParam
 ___encodeTwoParam:
 	ret
@@ -2288,7 +2307,7 @@ ___testseg:
 	call writeexpdata
 	jmp ___codeAlu0
 ___alu0segerr:
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	xor cx,cx
 	mov ax,0
 	jmp ___codeAlu0
@@ -2368,7 +2387,7 @@ codeAlu1: ;()->(ax=codelength,[codestore] filled)
 	je ___exp116
 	xor cx,cx
 	xor ax,ax
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp ___codealu1
 ___exp18:
 	pop ax
@@ -2381,7 +2400,7 @@ ___exp116:  pop ax
 	jmp ___alu1par2
 ___exp1ind:
 	pop ax
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	call checkExpression
 	cmp cx,0
 	jne ___codealu1ind
@@ -2390,7 +2409,7 @@ ___exp1ind:
 ___alu1bigptr:
 	xor cx,cx
 	xor ax,ax
-	mov di,er_ptrtoolarge
+	mov di,errmsg_ptrtoolarge
 	jmp ___codealu1
 ___codealu1ind:
 	mov cx,ax
@@ -2420,13 +2439,13 @@ ___badalu1par2:
 	pop ax
 	xor cx,cx
 	xor ax,ax
-	mov di,er_badregmix
+	mov di,errmsg_badregmix
 	jmp ___codealu1
 ___badalu1mne:
 	pop ax
 	xor cx,cx
 	xor ax,ax
-	mov di,er_unknownMne
+	mov di,errmsg_unknownMne
 	jmp ___codeAlu1
 ___alu1par28:
 	cmp al,1
@@ -2497,10 +2516,10 @@ ___testptrword:
 ___leadsesformerr:
 	xor cx,cx
 	mov ax,0
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp ___codeLeadses
 ___leadsessegerr:
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	xor cx,cx
 	mov ax,0
 	jmp ___codeLeadses
@@ -2592,7 +2611,7 @@ ___regisax:
 	jne ___writexchgCode
 	mov cx,0
 	mov ax,0
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp ___codeXchg
 ___writexchgCode:
 	mov [codestore],ah
@@ -2614,7 +2633,7 @@ ___8bitxchg:
 	mov cx,1
 	jmp ___codeXchg
 ___xchgsegerr:
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	xor cx,cx
 	mov ax,0
 ___codeXchg:
@@ -2648,7 +2667,7 @@ ___testtestIseg:
 ___testIsegerr:
 	mov ax,0
 	mov cx,0
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp ___codeTestI
 ___testIliteral:
 	push ax
@@ -2749,7 +2768,7 @@ ___movexpcode:
 	jne ___writemovlit
 	mov cx,0
 	mov ax,0
-	mov di,er_littoolarge
+	mov di,errmsg_littoolarge
 	jmp ___codeMov
 ___writemovlit:
 	and ah,1             ;set if byte ptr
@@ -2784,7 +2803,7 @@ ___noreg2err:
 	test ah,128
 	jz ___notPortSeg
 	xor cx,cx
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp codePort
 ___notPortSeg:
 	test ah,64
@@ -2851,7 +2870,7 @@ ___portlit:
 	jz ___plitisbyte
 	mov ax,0
 	mov cx,0
-	mov di,er_littoolarge
+	mov di,errmsg_littoolarge
 	jmp ___codeport
 ___plitisbyte:
 	mov [codestore+1],bl
@@ -2878,12 +2897,12 @@ ___plitisbyte:
 	mov cx,1
 	jmp ___codeport
 ___badplitpos:
-	mov di,er_invparams
+	mov di,errmsg_invparams
 	xor cx,cx
 	xor ax,ax
 	jmp ___codePort
 ___badportreg:
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	xor cx,cx
 	xor ax,ax
 	jmp ___codePort
@@ -2942,7 +2961,7 @@ ___notMov:
 	call codePort
 	jmp ___codeTwoParam
 ___notPort:
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	xor cx,cx
 	xor ax,ax
 ___codeTwoParam:
@@ -2960,7 +2979,7 @@ codePushPop:
 	cmp ah,3
 	je ___stackreg
 	pop ax
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	mov ax,0
 	mov cx,0
 	jmp ___codePushPop
@@ -3033,13 +3052,13 @@ codeIncDec:
 	cmp ah,2
 	je ___idreg8
 	pop ax
-	mov di,er_invparams
+	mov di,errmsg_invparams
 	mov ax,0
 	mov cx,0
 	jmp ___codeIncDec
 ___idseg:
 	pop ax
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	mov ax,0
 	mov cx,0
 	jmp ___codeIncDec
@@ -3121,7 +3140,7 @@ codeAlu2:
 ___badalu2:
 	xor cx,cx
 	xor ax,ax
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp ___codeAlu2
 ___alu2exp:
 	pop ax
@@ -3184,7 +3203,7 @@ ___writeInt3:
 ___badintcall:
 	xor cx,cx
 	xor ax,ax
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp ___codeInt
 ___codeInt:
 	ret
@@ -3212,7 +3231,7 @@ codeAscAdj:
 ___badascadj:
 	xor cx,cx
 	xor ax,ax
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp ___codeInt
 ___codeAscAdj:
 	ret
@@ -3246,7 +3265,7 @@ ___writeret1code:
 ___badRet1:
 	xor cx,cx
 	xor ax,ax
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp ___codeRet1
 ___codeRet1:
 	ret
@@ -3353,7 +3372,7 @@ ___skipwordjump:
 ___badJumpCall:
 	xor cx,cx
 	xor ax,ax
-	mov di,er_inviform
+	mov di,errmsg_inviform
 ___codeJumpCall:
 	ret
 calc8off: ;(dx=address) (dl=offset,cx=err)
@@ -3364,7 +3383,7 @@ calc8off: ;(dx=address) (dl=offset,cx=err)
 	cmp dx,127
 	jle ___offokay
 ___bad8off:
-	mov di,er_offtoolarge
+	mov di,errmsg_offtoolarge
 	xor cx,cx
 	jmp ___calc8off
 ___offokay:
@@ -3384,7 +3403,7 @@ codeBranch:
 	jle ___brokay
 	mov cx,0
 	mov ax,0
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp ___codeBranch
 ___brokay:
 	cmp [symbolload],0
@@ -3413,7 +3432,7 @@ codeLoop:
 	jle ___loopokay
 	mov cx,0
 	mov ax,0
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	jmp ___codeLoop
 ___loopokay:
 	cmp [symbolload],0
@@ -3503,7 +3522,7 @@ ___notBranch:
 	call codeLoop
 	jmp ___codeOneParam
 ___notLoopy:
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	xor cx,cx
 	xor ax,ax
 ___codeOneParam:
@@ -3602,7 +3621,7 @@ ___badquotedstr:
 	pop ax
 	xor ax,ax
 	xor cx,cx
-	mov di,er_strtoolong
+	mov di,errmsg_strtoolong
 ___numtest:
 	mov ax,0
 	push si
@@ -3622,7 +3641,7 @@ ___numtest:
 	jne ___writeqword
 	cmp bh,0
 	je ___writeqbyte
-	mov di,er_littoolarge
+	mov di,errmsg_littoolarge
 	xor cx,cx
 	mov ax,0
 	jmp ___mstob
@@ -3639,7 +3658,7 @@ ___numbad:
 	pop si
 	pop si
 	pop ax
-	mov di,er_invnumform
+	mov di,errmsg_invnumform
 	mov ax,0
 	xor cx,cx
 	jmp ___mstob
@@ -3654,7 +3673,7 @@ ___testendq:
 	inc di
 	jmp ___nextq
 ___stoberr:
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	mov ax,0
 	xor cx,cx
 	jmp ___mstob
@@ -3687,7 +3706,7 @@ encodePseudo: ;()->(ax=len,cx=error)
 	pop si
 	xor cx,cx
 	mov ax,0
-	mov di,er_unknownmne
+	mov di,errmsg_unknownmne
 	jmp ___encodePseudo
 ___setEquality:
 	pop ax
@@ -3722,7 +3741,7 @@ ___equality:
 	jne ___numchecks
 	xchg si,di
 	mov ax,0
-	mov di,er_invnumform
+	mov di,errmsg_invnumform
 	jmp ___encodePseudo
 ___numchecks:
 	mov di,mnemonicStore
@@ -3762,7 +3781,7 @@ ___dwstr:
 	jmp ___encodePseudo
 ___dblabel:
 	mov cx,0
-	mov di,er_inviform
+	mov di,errmsg_inviform
 	mov ax,0
 	jmp ___encodePseudo
 ___dwlabel:
@@ -3791,7 +3810,7 @@ encodeLine: ;(es:di=string)->(ax=length,es:di=code or error message)(cx=error)
 	jng ___linelenok
 	push cs
 	pop es
-	mov di,er_linetoolong
+	mov di,errmsg_linetoolong
 	xor cx,cx
 	xor ax,ax
 	jmp ___encodeLine
@@ -3925,7 +3944,7 @@ openfiles:
 	mov ax,3d00h   ;open inf
 	int 21h
 	jnb ___norer
-	mov di,er_inferr
+	mov di,errmsg_inferr
 	jmp ___tiser
 ___norer:
 	mov [inf],ax
@@ -3950,7 +3969,7 @@ ___dotfound:
 	mov [ouf],ax
 	mov cx,1
 	jnb ___nower
-	mov di,er_ouferr
+	mov di,errmsg_ouferr
 ___tiser:
 	mov cx,0
 ___nower:
@@ -4033,7 +4052,7 @@ ___noteof:
 	int 21h
 	jnb ___noreaderr
 	mov cx,0
-	mov di,er_inferr
+	mov di,errmsg_inferr
 	jmp ___readln
 ___noreaderr:
 	cmp ax,cx
@@ -4049,7 +4068,7 @@ ___readok:
 	cmp ax,[bufend]
 	jle ___eolinbuf
 	mov cx,0
-	mov di,er_linetoolong
+	mov di,errmsg_linetoolong
 	jmp ___readln
 ___eolinbuf:
 	mov bx,ax
@@ -4097,7 +4116,7 @@ ___repeat:
 	add [codelen],ax
 	jnb ___nowrite
 	mov cx,0
-	mov di,er_ouferr
+	mov di,errmsg_ouferr
 	jmp ___passerr
 ___nowrite:
 	inc word ptr[line]
@@ -4132,7 +4151,7 @@ start:
 	int 21h
 	or al,al	; AL=0? not 0 means DOS 2.0 or higher
 	jnz ___nextpass
-	mov di,er_baddos
+	mov di,errmsg_baddos
 	call prints
 	ret
 ; run two passes on the source code
