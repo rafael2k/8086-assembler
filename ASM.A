@@ -2,7 +2,7 @@
 ; `ASM.A' -- Source code for 8086 assembler main executable `ASM.COM'.
 ;
 ; Copyright (c) 2001 Stephen Duffy <scfduffy@gmail.com>
-; Copyright (c) 2020 Robert Riebisch <rr@bttr-software.de>
+; Copyright (c) 2020-2021 Robert Riebisch <rr@bttr-software.de>
 ;
 ; Usage of the works is permitted under the terms of the GNU GPL v2.
 ; See `LICENSE' file for details.
@@ -22,7 +22,7 @@ buflen		equ 80
 ; user-interface messages except errors
 msg_banner:	db "8086 Assembler for DOS",13,10
 		db "Copyright (c) 2001 Stephen Duffy",13,10
-		db "Copyright (c) 2020 Robert Riebisch",13,10
+		db "Copyright (c) 2020-2021 Robert Riebisch",13,10
 		db "[Under GNU GPL v2]",13,10
 		db 13,10,0
 msg_pass:	db ">> Pass ",0

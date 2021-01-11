@@ -164,7 +164,7 @@ While generating `HELLO.COM` 8086 Assembler will show the following:
 ```
 8086 Assembler for DOS
 Copyright (c) 2001 Stephen Duffy
-Copyright (c) 2020 Robert Riebisch
+Copyright (c) 2020-2021 Robert Riebisch
 [Under GNU GPL v2]
 
 >> Pass 1 started
@@ -198,7 +198,7 @@ That's all.
 ## License
 
 Copyright (c) 2001 Stephen Duffy <scfduffy@gmail.com>  
-Copyright (c) 2020 Robert Riebisch <rr@bttr-software.de>
+Copyright (c) 2020-2021 Robert Riebisch <rr@bttr-software.de>
 
 Usage of the works is permitted under the terms of the GNU GPL v2.  
 See `LICENSE` file for details.
