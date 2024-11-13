@@ -3,6 +3,7 @@
 ;
 ; Copyright (c) 2001 Stephen Duffy <scfduffy@gmail.com>
 ; Copyright (c) 2020-2021 Robert Riebisch <rr@bttr-software.de>
+; Copyright (c) 2024 Rafael Diniz <rafael@riseup.net>
 ;
 ; Usage of the works is permitted under the terms of the GNU GPL v2.
 ; See `LICENSE' file for details.
@@ -17,10 +18,6 @@ maxexplen	equ 80
 maxsymlen	equ 30
 symstack	equ 0b000h
 buflen		equ 80
-
-
-
-;	jmp start	; jump to main
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; data starts here
