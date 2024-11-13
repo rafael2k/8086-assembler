@@ -8,16 +8,26 @@
 ; See `LICENSE' file for details.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+BITS 16
+
+global _start
+
+
 maxexplen	equ 80
 maxsymlen	equ 30
 symstack	equ 0b000h
 buflen		equ 80
 
-	jmp start	; jump to main
+
+
+;	jmp start	; jump to main
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; data starts here
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+section .data                   ;section declaration
+
 
 ; user-interface messages except errors
 msg_banner:	db "8086 Assembler for DOS",13,10
@@ -321,6 +331,8 @@ eof:		dw 0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; code starts here (no more data)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+section .text                   ;section declaration
 
 strlen:
 	push di
@@ -4143,7 +4155,7 @@ printinst:
 	call prints
 	pop di
 	ret
-start:
+_start:
 	mov di,msg_banner
 	call prints
 ; check DOS version
