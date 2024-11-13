@@ -424,8 +424,8 @@ prints:
 	call strlen
     mov cx,di
     mov dx,ax
-    mov bx,1                ;1st arg: file handle (stdout)
-    mov ax,4                ;system call number (sys_write)
+    mov bx,1
+    mov ax,4
     int 0x80
 	pop dx
 	pop cx
