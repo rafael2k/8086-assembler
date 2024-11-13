@@ -8,9 +8,10 @@
 AS=nasm
 CC=ia16-elf-gcc
 
-all: ASM.A
-	$(AS) -f elf -o ASM.o ASM.A
-	$(CC) -melks-libc -mcmodel=small -nostdlib ASM.o -o ASM
+all:
+	$(AS) -f elf -o easm.o easm.s
+	$(CC) -melks-libc -mcmodel=small -nostdlib easm.o -o easm
 
-
+clean:
+	rm -f *.o easm
 # end
