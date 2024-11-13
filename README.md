@@ -1,6 +1,6 @@
 # 8086 Assembler for ELKS
 
-ps: This is a very initial port of the "8086 Assembler for DOS" for ELKS.
+ps: This is a very initial non-working port of the "8086 Assembler for DOS" for ELKS.
 
 ## About
 
