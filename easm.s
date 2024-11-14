@@ -11,6 +11,10 @@
 
 BITS 16
 
+CPU 8086
+
+;  incbin  "elks_header.dat",32
+
 global _start
 
 
@@ -310,11 +314,12 @@ PseudoOps:
 	db "=",0,0,0,0,0,0,0,2
 ___PseudoOps:
 
+cmdpar:     dw 0
 assumedbase:	dw 10
 nextsymbol:	dw symstack
 symbolload:	dw 0
 curip:		dw 0
-codebase:	dw 100h
+codebase:	dw 100h             ; should be 1000h for elks?
 codelen:	dw 0
 line:		dw 0
 curpass:	db 1
@@ -449,7 +454,7 @@ strcpy:
 	xchg ax,cx
 	cmp di,si
 	cld
-;	repnz
+	;repnz
 	rep
 	movsb
 	xchg ax,cx
@@ -1156,7 +1161,7 @@ swapsym:
 	call copysym ;t->d
 	pop si
 	ret
-sortSym:
+sortsym:
 	push ax
 	push dx
 	push bx
@@ -3933,57 +3938,56 @@ prints:
 	call strlen
     mov cx,di
     mov dx,ax
-    mov bx,1
-    mov ax,4
-    int 0x80
+    mov bx,1                    ; printing to stdout
+    mov ax,4                    ; write
+    int 80h
 	pop dx
 	pop cx
 	pop bx
 	pop ax
 	ret
 openfiles:
-	mov byte [eof],0
-	mov bl,[80h]
-	xor bh,bh
-	mov byte [81h+bx],0
-	mov si,81h
-	mov di,getsbuffer
-	call strcpy
-	call removetrails
-	mov dx,di
-	mov ax,3d00h   ;open inf
-	int 21h
-	jnb ___norer
-	mov di,errmsg_inferr
+
+  ; open the file
+    mov   ax,  5           ; open
+    mov bx,[cmdpar]
+    mov   cx,  0           ; read-only mode
+    int   80h              ;
+    cmp ax, 0
+    jg ___norer
+    mov di,errmsg_inferr
 	jmp ___tiser
 ___norer:
 	mov [inf],ax
-	call strlen
+    mov si, [cmdpar]
+    mov di,getsbuffer
+	call strcpy
+	call removetrails
+    call strlen
 	xchg bx,ax	; bx = result
 	mov al,'.'
 	call strpos
 	cmp ax,bx	; workaround strpos() flaw
 	jbe ___dotfound
-	xchg ax,bx	; ax = strlen() result
+    xchg ax,bx	; ax = strlen() result
 ___dotfound:
 	mov bx,ax
-	mov word  [bx+di],0432eh ;(".c")
-	mov word  [bx+di+2],04d4fh ;("om")
-	mov byte  [bx+di+4],0
-	mov ah,41h
-	mov dx,di
-	int 21h
-	mov ax,3c01h
-	mov cx,32
-	int 21h
-	mov [ouf],ax
+	mov word [bx+di],0
+    mov bx,di
+  ; open the file
+    mov   ax,  5            ; open(
+    mov   cx,  2            ;  rw
+    int   80h               ; );
+    cmp ax, 0
 	mov cx,1
-	jnb ___nower
+    mov [ouf],ax
+    jg ___nower
 	mov di,errmsg_ouferr
 ___tiser:
 	mov cx,0
 ___nower:
 	ret
+
 rewind:
 	mov ax,04200h
 	mov bx,[inf]
@@ -4154,6 +4158,10 @@ printinst:
 	pop di
 	ret
 _start:
+    pop   bx               ; argc
+    pop   bx               ; argv[0]
+    pop   bx               ; input file name
+    mov [cmdpar], bx
 	mov di,msg_banner
 	call prints
 ; run two passes on the source code
@@ -4173,8 +4181,8 @@ ___nextpass:
 	xor cx,cx	; CX:=0
 	jz ___anypass
 ___pass2:
-	;call rewind
-	;call sortsym
+	call rewind
+	call sortsym
 	mov cx,1
 ___anypass:
 	call pass
