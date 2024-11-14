@@ -439,7 +439,8 @@ strcpy:
 	xchg ax,cx
 	cmp di,si
 	cld
-	repnz
+;	repnz
+	rep
 	movsb
 	xchg ax,cx
 	pop ax
