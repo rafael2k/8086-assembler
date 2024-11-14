@@ -70,9 +70,6 @@ errmsg_undefsym:	db  15,"Unknown symbol",13,10,0
 errmsg_inferr:		db 201,"Input file error",13,10,0
 errmsg_ouferr:		db 202,"Output file error",13,10,0
 
-; special error message for DOS 1.x (no return code possible)
-errmsg_baddos:		db     "DOS 2.0 or higher required",13,10,0
-
 ; temporary data
 ;  When `ASM.COM' will support uninitialized data, these are candidates to
 ;  save 880 bytes disk space. Need to call an initialization function on
@@ -421,7 +418,7 @@ ___nextlwr:
 	mov al,[bx+di]
 	cmp al,0
 	je ___strlwr
-	cmp al,'"'
+	cmp al,'"'                  ;
 	je ___togq
 	cmp al,'`'
 	je ___togq
@@ -3947,7 +3944,6 @@ prints:
 	pop ax
 	ret
 openfiles:
-
   ; open the file
     mov   ax,  5           ; open
     mov bx,[cmdpar]
@@ -3975,12 +3971,15 @@ ___dotfound:
 	mov word [bx+di],0
     mov bx,di
   ; open the file
-    mov   ax,  5            ; open(
-    mov   cx,  2            ;  rw
+    mov ax,11                   ; remove file first
     int   80h               ; );
-    cmp ax, 0
+    mov   ax,  5            ; open(
+    mov   cx,  102            ;  rw
+    mov   dx, 511
+    int   80h               ; );
 	mov cx,1
     mov [ouf],ax
+    cmp ax, 0
     jg ___nower
 	mov di,errmsg_ouferr
 ___tiser:
@@ -4227,10 +4226,12 @@ ___error:
 	mov di,si
 	call prints	; print error message
 	cmp al,200	; return code >200?
-	ja ___start
+	;ja ___start
+    jmp ___exit
 	call printinst
 ___start:
 	call closefiles
+___exit:
 ; return to ELKS
     mov     bx,0                ;1st syscall arg: exit code
     mov     ax,1                ;system call number (sys_exit)
