@@ -418,7 +418,7 @@ ___nextlwr:
 	mov al,[bx+di]
 	cmp al,0
 	je ___strlwr
-	cmp al,'"'                  ;
+	cmp al,34                  ;
 	je ___togq
 	cmp al,'`'
 	je ___togq
@@ -784,7 +784,7 @@ outofquote:
 	dec bx
 ___nextqtest:
 	inc bx
-	cmp byte [bx+di],'"'
+	cmp byte [bx+di],34
 	je ___togdqte
 	cmp byte [bx+di],"'"
 	je ___togsqte
@@ -834,7 +834,7 @@ qtostest: ;(di=string)->(cx=err(open),ax=qtdlen)
 	je ___qtoscont
 	cmp dh,"`"
 	je ___qtoscont
-	cmp dh,'"'
+	cmp dh,34
 	je ___qtoscont
 	xor cx,cx
 	jmp ___qtostest
@@ -4226,13 +4226,13 @@ ___error:
 	mov di,si
 	call prints	; print error message
 	cmp al,200	; return code >200?
-	;ja ___start
+	                            ;ja ___start
     jmp ___exit
 	call printinst
 ___start:
 	call closefiles
 ___exit:
-; return to ELKS
+                                ; return to ELKS
     mov     bx,0                ;1st syscall arg: exit code
     mov     ax,1                ;system call number (sys_exit)
     int     0x80                ;call kernel
