@@ -17,7 +17,6 @@ CPU 8086
 
 global _start
 
-
 maxexplen	equ 80
 maxsymlen	equ 30
 symstack	equ 0b000h
@@ -27,7 +26,9 @@ buflen		equ 80
 ; data starts here
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-section .data                   ;section declaration
+; section .bss
+
+section .data
 
 
 ; user-interface messages except errors
@@ -333,6 +334,9 @@ eof:		dw 0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 section .text                   ;section declaration
+
+;_start:
+;    jmp _start_true
 
 strlen:
 	push di
@@ -904,7 +908,7 @@ ___delslash:
 ___testquote:
 	cmp al,dh
 	jne ___testend
-	mov word [di],0
+	mov byte [di],0
 	mov cx,1
 	jmp ___qtos
 ___testend:
@@ -3418,7 +3422,7 @@ codeBranch:
 	mov di,errmsg_inviform
 	jmp ___codeBranch
 ___brokay:
-	cmp byte [symbolload],0
+	cmp word [symbolload],0
 	je ___nocalc
 	call calc8off
 	cmp cx,0
@@ -3447,7 +3451,7 @@ codeLoop:
 	mov di,errmsg_inviform
 	jmp ___codeLoop
 ___loopokay:
-	cmp byte [symbolload],0
+	cmp word [symbolload],0
 	je ___noloopcalc
 	call calc8off
 	cmp cx,0
@@ -3968,15 +3972,15 @@ ___norer:
     xchg ax,bx	; ax = strlen() result
 ___dotfound:
 	mov bx,ax
-	mov word [bx+di],0
+	mov byte [bx+di],0
     mov bx,di
   ; open the file
     mov ax,11                   ; remove file first
-    int   80h               ; );
-    mov   ax,  5            ; open(
-    mov   cx,  102            ;  rw
-    mov   dx, 511
-    int   80h               ; );
+    int 80h               ; );
+    mov ax, 5            ; open(
+    mov cx, 102            ;  rw
+    mov dx, 0755q      ; permissions
+    int 80h               ; );
 	mov cx,1
     mov [ouf],ax
     cmp ax, 0
@@ -4039,10 +4043,10 @@ readln:
 	jg ___outofbuf
 	jmp ___eolinbuf
 ___outofbuf:
-	cmp byte [eof],1
+	cmp word [eof],1
 	jne ___noteof
 	mov cx,1
-	mov byte [eof],2
+	mov word [eof],2
 	jmp ___readln
 ___noteof:
 	mov cx,[bufend]
@@ -4059,22 +4063,26 @@ ___noteof:
 	add dx,cx
 	mov ax,buflen
 	sub ax,cx
-	mov cx,ax
+    mov cx,ax
+    xchg cx,dx
 	mov bx,[inf]
-	mov ah,03fh
-	int 21h
-	jnb ___noreaderr
+    mov ax,3
+    int 80h
+    cmp ax,0
+	jg ___noreaderr
 	mov cx,0
 	mov di,errmsg_inferr
 	jmp ___readln
 ___noreaderr:
-	cmp ax,cx
+    xchg cx,dx
+    cmp ax,cx
 	je ___readok
-	mov byte [eof],1
+	mov word [eof],1
 	add ax,dx
 	mov [bufend],ax
 ___readok:
 	mov di,getsbuffer
+    call prints
 	mov [nextpos],di
 	mov al,10
 	call strpos
@@ -4085,10 +4093,10 @@ ___readok:
 	jmp ___readln
 ___eolinbuf:
 	mov bx,ax
-	mov word  [di+bx-1],0
+	mov word [di+bx-1],0
 	mov [nextpos],di
 	add [nextpos],bx
-	add word  [nextpos],1
+	add word [nextpos],1
 	jmp ___readln
 ___readln:
 	pop si
@@ -4156,6 +4164,8 @@ printinst:
 	call prints
 	pop di
 	ret
+
+;_start_true:
 _start:
     pop   bx               ; argc
     pop   bx               ; argv[0]
