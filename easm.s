@@ -908,7 +908,7 @@ ___delslash:
 ___testquote:
     cmp al,dh
     jne ___testend
-    mov byte [di],0
+    mov word [di],0
     mov cx,1
     jmp ___qtos
 ___testend:
@@ -3949,6 +3949,7 @@ prints:
     ret
 openfiles:
   ; open the file
+    mov word [eof],0
     mov   ax,  5           ; open
     mov bx,[cmdpar]
     mov   cx,  0           ; read-only mode
@@ -4000,7 +4001,7 @@ rewind:
     mov ax,04201h
     xor dx,dx
     int 21h
-    mov byte [eof],0
+    mov word [eof],0
     ret
 closefiles:
     push ax
@@ -4114,7 +4115,7 @@ pass:
     mov word [curip],cx
 ___repeat:
     call readln
-    cmp byte [eof],2
+    cmp word [eof],2
     je ___pass
     cmp cx,0
     je ___passerr
